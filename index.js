@@ -58,4 +58,4 @@ process.on('uncaughtExceptionMonitor', (err, origin) => {
 
 ///////////////////////// Login /////////////////////////
 
-client.login(config.botToken);
+client.login(config.Token);
