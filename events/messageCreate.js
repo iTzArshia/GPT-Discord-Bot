@@ -13,8 +13,8 @@ module.exports = async (client, message) => {
         try {
             command.execute(client, message, args, cmd);
         } catch (error) {
-            console.error(error)
-        }
+            console.error(error);
+        };
 
     };
 
