@@ -11,12 +11,6 @@ GPT Discord Bot is the original Discord AI bot written in **[JavaScript](https:/
    1.1. Enable "Message Content Intent" in Discord Developer Portal
 2. OpenAI API Key
 3. **[Node.js 16.9.0](https://nodejs.org/en/download/)** or higher
-## 📸 Screenshots
-Soon
-## ❤️ Donations
-You can **[support](https://reymit.ir/itz_arshia)** me by donating if you like the project!
-> Only available for Iranians :(
-
 # 🚀 Getting Started
 ## ⚙️ Configuration
 Go to `config.json` and fill out the values:
@@ -37,7 +31,14 @@ Open your terminal and install required packages with
 npm install
 ```
 After installation finishes run `node register.js` to deploy slash commands and then run `node index.js` in terminal to start the bot.
-# ✨Latest Updates
+## ✨Latest Updates
 This is the first version of the bot, in the feature when I update the bot I will write updates here.
+## 📸 Screenshots
+![ask command preview](https://user-images.githubusercontent.com/89854127/218278486-b3af6197-dd55-42ab-8878-25f089ad830c.png)
+![imagine command preview](https://user-images.githubusercontent.com/89854127/218278489-af99c363-7697-439e-9812-ac196e2fb570.png)
+## ❤️ Donations
+You can **[support](https://reymit.ir/itz_arshia)** me by donating if you like the project!
+> Only available for Iranians :(
+
 #
 Made with ❤️ and JavaScript, Don't Forget to ⭐
