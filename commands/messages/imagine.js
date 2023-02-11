@@ -32,7 +32,7 @@ module.exports = {
             const response = await openai.createImage({
                 prompt: question,
                 n: 4,
-                size: '1024×1024'
+                size: '1024x1024'
             });
 
             const embeds = [
@@ -63,6 +63,8 @@ module.exports = {
         } catch (error) {
 
             if (error.response) {
+
+                const question = args.join(" ");
 
                 const embed = new Discord.EmbedBuilder()
                     .setColor(config.ErrorColor)
