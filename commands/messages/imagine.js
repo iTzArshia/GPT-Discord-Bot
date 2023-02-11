@@ -22,18 +22,20 @@ module.exports = {
 
         };
 
-        try {
+        const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
+        const openai = new openAI.OpenAIApi(configuration);
 
-            const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
-            const openai = new openAI.OpenAIApi(configuration);
+        const question = args.join(" ");
 
-            const question = args.join(" ");
+        openai.createImage({
 
-            const response = await openai.createImage({
-                prompt: question,
-                n: 4,
-                size: '1024x1024'
-            });
+            prompt: question,
+            n: 4,
+            size: '1024x1024'
+
+        }).then(async (response) => {
+
+            const data = response.data;
 
             const embeds = [
 
@@ -44,7 +46,7 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: message.author.displayAvatarURL()
                     })
-                    .setImage(response.data.data[0].url)
+                    .setImage(data.data[0].url)
 
             ];
 
@@ -52,7 +54,7 @@ module.exports = {
 
                 const embed = new Discord.EmbedBuilder()
                     .setURL('https://github.com/iTzArshia/GPT-Discord-Bot')
-                    .setImage(response.data.data[i + 1].url);
+                    .setImage(data.data[i + 1].url);
 
                 embeds.push(embed);
 
@@ -60,11 +62,9 @@ module.exports = {
 
             await message.reply({ embeds: embeds });
 
-        } catch (error) {
+        }).catch(async (error) => {
 
             if (error.response) {
-
-                const question = args.join(" ");
 
                 const embed = new Discord.EmbedBuilder()
                     .setColor(config.ErrorColor)
@@ -76,13 +76,25 @@ module.exports = {
 
                 await message.reply({ embeds: [embed] }).catch(() => null);
 
+            } else if (error.message) {
+
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: message.author.displayAvatarURL()
+                    })
+                    .setDescription(error.message);
+
+                await message.reply({ embeds: [embed] }).catch(() => null);
+
             } else {
 
                 console.error(error);
 
             };
 
-        };
+        });
 
     },
 
