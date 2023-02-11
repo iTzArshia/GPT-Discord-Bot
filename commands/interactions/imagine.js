@@ -58,6 +58,8 @@ module.exports = {
 
         }).catch(async (error) => {
 
+            console.error(error);
+
             if (error.response) {
 
                 const embed = new Discord.EmbedBuilder()
@@ -81,10 +83,6 @@ module.exports = {
                     .setDescription(error.message);
 
                 await interaction.editReply({ embeds: [embed] }).catch(() => null);
-
-            } else {
-
-                console.error(error);
 
             };
 
