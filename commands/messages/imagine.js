@@ -63,6 +63,8 @@ module.exports = {
             await message.reply({ embeds: embeds });
 
         }).catch(async (error) => {
+            
+            console.error(error);
 
             if (error.response) {
 
@@ -87,10 +89,6 @@ module.exports = {
                     .setDescription(error.message);
 
                 await message.reply({ embeds: [embed] }).catch(() => null);
-
-            } else {
-
-                console.error(error);
 
             };
 
