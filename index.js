@@ -19,6 +19,16 @@ for (const file of events) {
   delete require.cache[require.resolve(`./events/${file}`)];
 };
 
+///////////////////////// Message Commands /////////////////////////
+
+client.MessageCommands = new Discord.Collection();
+const messageCommands = fs.readdirSync(`./commands/messages/`).filter(files => files.endsWith('.js'));
+for (const file of messageCommands) {
+  const command = require(`./commands/messages/${file}`);
+  client.MessageCommands.set(command.name.toLowerCase(), command);
+  delete require.cache[require.resolve(`./commands/messages/${file}`)];
+};
+
 /////////////////////// Anti Crash ///////////////////////
 
 process.on('unhandledRejection', (reason, p) => {
