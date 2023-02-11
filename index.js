@@ -9,6 +9,16 @@ const client = new Discord.Client({
     Discord.GatewayIntentBits.MessageContent
   ]
 });
+
+/////////////////////// Events ///////////////////////
+
+const events = fs.readdirSync(`./events/`).filter(file => file.endsWith('.js'));
+for (const file of events) {
+  const event = require(`./events/${file}`);
+  client.on(file.split('.')[0], event.bind(null, client));
+  delete require.cache[require.resolve(`./events/${file}`)];
+};
+
 /////////////////////// Anti Crash ///////////////////////
 
 process.on('unhandledRejection', (reason, p) => {
