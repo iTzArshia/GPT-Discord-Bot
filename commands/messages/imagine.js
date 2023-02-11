@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const openAI = require('openai');
-const config = require('../config.json');
+const config = require('../../config.json');
 
 module.exports = {
     name: "imagine",
@@ -14,7 +14,7 @@ module.exports = {
         if (!args[0]) {
 
             const embed = new Discord.EmbedBuilder()
-                .setColor('Red')
+                .setColor(config.ErrorColor)
                 .setTitle('Error')
                 .setDescription(`You can't use the \`${cmd}\` command like this you have to provide something like the example\n\`\`\`\n${config.Prefix}${cmd} A Dragon under water\n\`\`\``);
 
@@ -38,9 +38,12 @@ module.exports = {
             const embeds = [
 
                 new Discord.EmbedBuilder()
-                    .setColor('Purple')
+                    .setColor(config.MainColor)
                     .setURL('https://github.com/iTzArshia/GPT-Discord-Bot')
-                    .setDescription(question)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: message.author.displayAvatarURL()
+                    })
                     .setImage(response.data.data[0].url)
 
             ];
@@ -59,20 +62,26 @@ module.exports = {
 
         } catch (error) {
 
-            console.error(error);
-
             if (error.response) {
 
                 const embed = new Discord.EmbedBuilder()
-                    .setColor('Red')
-                    .setTitle(`Error [${error.response.status}]`)
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: message.author.displayAvatarURL()
+                    })
                     .setDescription(error.response.data.error.message);
 
-                await message.reply({ embeds: [embed] });
+                await message.reply({ embeds: [embed] }).catch(() => null);
+
+            } else {
+
+                console.error(error);
 
             };
 
         };
 
     },
+
 };
