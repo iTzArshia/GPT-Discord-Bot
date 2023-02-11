@@ -35,7 +35,7 @@ client.SlashCommands = new Discord.Collection();
 const slashCommands = fs.readdirSync(`./commands/interactions/`).filter(files => files.endsWith('.js'));
 for (const file of slashCommands) {
   const command = require(`./commands/interactions/${file}`);
-  client.MessageCommands.set(command.data.name, command);
+  client.SlashCommands.set(command.data.name, command);
   delete require.cache[require.resolve(`./commands/interactions/${file}`)];
 };
 
