@@ -16,18 +16,20 @@ module.exports = {
 
         await interaction.deferReply();
 
-        try {
+        const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
+        const openai = new openAI.OpenAIApi(configuration);
 
-            const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
-            const openai = new openAI.OpenAIApi(configuration);
+        const question = interaction.options.getString("prompt");
 
-            const question = interaction.options.getString("prompt");
+        openai.createImage({
 
-            const response = await openai.createImage({
-                prompt: question,
-                n: 4,
-                size: '1024x1024'
-            });
+            prompt: question,
+            n: 4,
+            size: '1024x1024'
+
+        }).then(async (response) => {
+
+            const data = response.data;
 
             const embeds = [
 
@@ -38,7 +40,7 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: interaction.user.displayAvatarURL()
                     })
-                    .setImage(response.data.data[0].url)
+                    .setImage(data.data[0].url)
 
             ];
 
@@ -46,7 +48,7 @@ module.exports = {
 
                 const embed = new Discord.EmbedBuilder()
                     .setURL('https://github.com/iTzArshia/GPT-Discord-Bot')
-                    .setImage(response.data.data[i + 1].url);
+                    .setImage(data.data[i + 1].url);
 
                 embeds.push(embed);
 
@@ -54,7 +56,7 @@ module.exports = {
 
             await interaction.editReply({ embeds: embeds });
 
-        } catch (error) {
+        }).catch(async (error) => {
 
             if (error.response) {
 
@@ -68,13 +70,25 @@ module.exports = {
 
                 await interaction.editReply({ embeds: [embed] }).catch(() => null);
 
+            } else if (error.message) {
+
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(error.message);
+
+                await interaction.editReply({ embeds: [embed] }).catch(() => null);
+
             } else {
 
                 console.error(error);
 
             };
 
-        };
+        });
 
     },
 
