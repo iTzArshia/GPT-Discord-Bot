@@ -3,8 +3,9 @@ const openAI = require('openai');
 const config = require('../../config.json');
 
 module.exports = {
-    name: "gpt",
-    aliases: ['ask', 'chat'],
+    name: "ask",
+    aliases: ['gpt', 'chat'],
+    description: "Answers your questions",
 
     async execute(client, message, args, cmd) {
 
