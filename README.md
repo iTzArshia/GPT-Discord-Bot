@@ -11,7 +11,6 @@ GPT Discord Bot is the original Discord AI bot written in **[JavaScript](https:/
    1.1. Enable "Message Content Intent" in Discord Developer Portal
 2. OpenAI API Key
 3. **[Node.js 16.9.0](https://nodejs.org/en/download/)** or higher
-> NOTE: You don't need any API Key to setup the bot! only thing you need is Node.js and a Discord bot Token to run your bot!
 ## 📸 Screenshots
 Soon
 ## ❤️ Donations
