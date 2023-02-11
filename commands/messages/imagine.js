@@ -24,7 +24,7 @@ module.exports = {
 
         try {
 
-            const configuration = new openAI.Configuration({ apiKey: config.openAIapiKey });
+            const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
             const openai = new openAI.OpenAIApi(configuration);
 
             const question = args.join(" ");
