@@ -36,7 +36,7 @@ module.exports = {
 
         }).then(async (response) => {
 
-            const data = response.data;
+            const data = response.data.data;
 
             const embeds = [
 
@@ -47,15 +47,15 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: message.author.displayAvatarURL()
                     })
-                    .setImage(data.data[0].url)
+                    .setDescription(data.map((d, i) => `[\`image ${i + 1}\`](${d.url})`).join(' | '))
+                    .setImage(data[0].url)
 
             ];
 
             for (let i = 0; i < 3; i++) {
-
                 const embed = new Discord.EmbedBuilder()
                     .setURL('https://github.com/iTzArshia/GPT-Discord-Bot')
-                    .setImage(data.data[i + 1].url);
+                    .setImage(data[i + 1].url);
 
                 embeds.push(embed);
 
