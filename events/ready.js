@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const chalk = require('chalk');
 
 module.exports = async (client) => {
 
@@ -12,6 +13,6 @@ module.exports = async (client) => {
         status: 'online'
     });
 
-    console.log(`${client.user.tag} is online and ready to answer your questions!`);
+    console.log(chalk.bold.greenBright(`${client.user.tag} is online and ready to answer your questions!`));
 
 };
