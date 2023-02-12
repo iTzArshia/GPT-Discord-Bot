@@ -6,7 +6,7 @@ const config = require('../../config.json');
 module.exports = {
     name: "Imagine",
     aliases: ['I', 'D', 'Draw'],
-    description: "Draw your imaginations",
+    description: "Draw your imaginations!",
 
     async execute(client, message, args, cmd) {
 
