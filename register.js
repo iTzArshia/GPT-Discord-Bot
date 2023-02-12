@@ -28,7 +28,7 @@ const rest = new Discord.REST({ version: '10' }).setToken(config.Token);
         console.log(chalk.bold.redBright(`Note: if you didn't see slash commands in your server maybe your bot don't have "applicatiton.commands" scope try to invite it using this link\nhttps://discord.com/api/oauth2/authorize?client_id=${config.ClientID}&permissions=0&scope=bot%20applications.commands`))
 
     } catch (error) {
-        console.error(error);
+        console.error(chalk.bold.redBright(error));
     }
 
 })();
