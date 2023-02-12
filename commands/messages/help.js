@@ -2,8 +2,8 @@ const Discord = require('discord.js');
 const config = require('../../config.json');
 
 module.exports = {
-  name: "help",
-  aliases: ["h", "cmd", "cmds", "command", "commands"],
+  name: "Help",
+  aliases: ["H", "CMD", "CMDs", "Command", "Commands"],
   description: "Shows This!",
 
   async execute(client, message, args, cmd) {
