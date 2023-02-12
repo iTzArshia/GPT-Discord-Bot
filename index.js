@@ -1,7 +1,16 @@
+/*
+    Author: iTz Arshia
+    Github: https://github.com/iTzArshia/GPT-Discord-Bot
+    Current Version: 1.0.0
+    DiscordJs Version: 14.7.1
+    OpenAI Version: 3.1.0
+*/
+
 const Discord = require('discord.js');
 const fs = require('node:fs');
 const config = require('./config.json');
 
+// Discord Client Constructor
 const client = new Discord.Client({
   intents: [
     Discord.GatewayIntentBits.Guilds,
@@ -10,8 +19,8 @@ const client = new Discord.Client({
   ]
 });
 
-/////////////////////// Events ///////////////////////
-
+// Event Handler
+console.log(`Loading Events`);
 const events = fs.readdirSync(`./events/`).filter(file => file.endsWith('.js'));
 for (const file of events) {
   const event = require(`./events/${file}`);
@@ -19,8 +28,8 @@ for (const file of events) {
   delete require.cache[require.resolve(`./events/${file}`)];
 };
 
-///////////////////////// Message Commands /////////////////////////
-
+// Message Command Handler
+console.log(`Loading Message Commands`);
 client.MessageCommands = new Discord.Collection();
 const messageCommands = fs.readdirSync(`./commands/messages/`).filter(files => files.endsWith('.js'));
 for (const file of messageCommands) {
@@ -29,8 +38,8 @@ for (const file of messageCommands) {
   delete require.cache[require.resolve(`./commands/messages/${file}`)];
 };
 
-///////////////////////// Slash Commands /////////////////////////
-
+// Slash Command Handler
+console.log(`Loading Slash Commands`);
 client.SlashCommands = new Discord.Collection();
 const slashCommands = fs.readdirSync(`./commands/interactions/`).filter(files => files.endsWith('.js'));
 for (const file of slashCommands) {
@@ -39,8 +48,7 @@ for (const file of slashCommands) {
   delete require.cache[require.resolve(`./commands/interactions/${file}`)];
 };
 
-/////////////////////// Anti Crash ///////////////////////
-
+// Anti Crash
 process.on('unhandledRejection', (reason, p) => {
   console.log('[antiCrash] :: Unhandled Rejection/Catch');
   console.log(reason?.stack, p);
@@ -56,6 +64,5 @@ process.on('uncaughtExceptionMonitor', (err, origin) => {
   console.log(err?.stack, origin);
 });
 
-///////////////////////// Login /////////////////////////
-
+// Discord Client login
 client.login(config.Token);
