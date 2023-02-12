@@ -21,14 +21,14 @@ module.exports = {
         const openai = new openAI.OpenAIApi(configuration);
 
         const question = interaction.options.getString("prompt");
-        const prompt = `||>System: Instructions for ${client.user.username}: Please act as an English translator. spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it to English and then answer in the corrected and improved version of my text in English. I want you to replace my simplified words and senteces with more beatiful and elegant, upper level Egnlish words and senteces. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, don not write explanations.\n||>Messages:\n||>${message.author.username}: ${question}\n||>${client.user.username}:`;
+        const prompt = `||>System: Instructions for ${client.user.username}: Please act as an English translator. spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it to English and then answer in the corrected and improved version of my text in English. I want you to replace my simplified words and sentences with more beautiful and elegant, upper level English words and sentences. Retain the meaning, but elevate them into a higher literacy competency. I want you to only reply to the correction, the improvements and nothing else, do not write any additional explanations.\n||>Messages:\n||>${interaction.user.username}: ${question}\n||>${client.user.username}:`;
 
         openai.createCompletion({
 
             model: 'text-davinci-003',
             prompt: prompt,
             max_tokens: 2048,
-            temperature: 0.8,
+            temperature: 0.77,
             top_p: 0.9,
             frequency_penalty: 0.95,
             presence_penalty: 0.95
