@@ -21,7 +21,7 @@ const client = new Discord.Client({
 });
 
 // Event Handler
-console.log(chalk.bold.greenBright('Loading Events'));
+console.log(chalk.bold.yellowBright('Loading Events'));
 const events = fs.readdirSync(`./events/`).filter(file => file.endsWith('.js'));
 for (const file of events) {
   const event = require(`./events/${file}`);
@@ -30,7 +30,7 @@ for (const file of events) {
 };
 
 // Message Command Handler
-console.log(chalk.bold.greenBright('Loading Message Commands'));
+console.log(chalk.bold.yellowBright('Loading Message Commands'));
 client.MessageCommands = new Discord.Collection();
 const messageCommands = fs.readdirSync(`./commands/messages/`).filter(files => files.endsWith('.js'));
 for (const file of messageCommands) {
@@ -40,7 +40,7 @@ for (const file of messageCommands) {
 };
 
 // Slash Command Handler
-console.log(chalk.bold.greenBright('Loading Slash Commands'));
+console.log(chalk.bold.yellowBright('Loading Slash Commands'));
 client.SlashCommands = new Discord.Collection();
 const slashCommands = fs.readdirSync(`./commands/interactions/`).filter(files => files.endsWith('.js'));
 for (const file of slashCommands) {
