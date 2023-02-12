@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const openAI = require('openai');
+const chalk = require('chalk');
 const config = require('../../config.json');
 
 module.exports = {
@@ -58,7 +59,7 @@ module.exports = {
 
         }).catch(async (error) => {
 
-            console.error(error);
+            console.error(chalk.bold.redBright(error));
 
             if (error.response) {
 
