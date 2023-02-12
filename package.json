@@ -1,7 +1,13 @@
 {
-    "dependencies": {
-      "discord.js": "^14.7.1",
-      "openai": "^3.1.0"
-    }
-  }
-  
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "openai": "^3.1.0"
+  },
+  "name": "gpt-discord-bot",
+  "description": "Chat GPT Discord Bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/iTzArshia/GPT-Discord-Bot",
+  "author": "iTz Arshia",
+  "license": "MIT"
+}
