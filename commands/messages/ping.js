@@ -7,6 +7,8 @@ module.exports = {
     description: "Shows the bot\'s latency.",
 
     async execute(client, message, args, cmd) {
+     
+        await message.channel.sendTyping();
 
         const embed = new Discord.EmbedBuilder()
             .setColor(config.MainColor)
