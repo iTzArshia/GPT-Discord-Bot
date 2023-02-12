@@ -32,9 +32,9 @@ module.exports = {
 
             model: 'text-davinci-003',
             prompt: prompt,
-            max_tokens: 1024,
-            temperature: 1,
-            top_p: 0.9
+            max_tokens: 2048,
+            temperature: 0,
+            top_p: 1
 
         }).then(async (response) => {
 
