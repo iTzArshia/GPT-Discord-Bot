@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const chalk = require('chalk');
 const config = require('../config.json');
 
 module.exports = async (client, message) => {
@@ -13,7 +14,7 @@ module.exports = async (client, message) => {
         try {
             command.execute(client, message, args, cmd);
         } catch (error) {
-            console.error(error);
+            console.error(chalk.bold.redBright(error));
         };
 
     };
