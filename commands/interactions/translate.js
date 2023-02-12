@@ -5,7 +5,7 @@ const config = require('../../config.json');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
-        .setName("Translate")
+        .setName("translate")
         .setDescription("Translate your texts from any language to English!")
         .addStringOption(option => option
             .setName("prompt")
