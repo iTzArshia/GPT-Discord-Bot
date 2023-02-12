@@ -3,7 +3,7 @@ const config = require('../../config.json');
 
 module.exports = {
     name: "Ping",
-    aliases: ["latency"],
+    aliases: ["P", "L", "Latency"],
     description: "Shows the bot\'s latency.",
 
     async execute(client, message, args, cmd) {
