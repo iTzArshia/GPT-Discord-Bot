@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "chalk": "^4.1.2",
     "discord.js": "^14.7.1",
     "openai": "^3.1.0"
   },
