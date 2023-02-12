@@ -4,7 +4,7 @@ const config = require('../../config.json');
 
 module.exports = {
     name: "imagine",
-    aliases: ['draw'],
+    aliases: ['i', 'd', 'draw'],
     description: "Draw your imaginations",
 
     async execute(client, message, args, cmd) {
@@ -63,7 +63,7 @@ module.exports = {
             await message.reply({ embeds: embeds });
 
         }).catch(async (error) => {
-            
+
             console.error(error);
 
             if (error.response) {
