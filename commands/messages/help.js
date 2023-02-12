@@ -7,6 +7,8 @@ module.exports = {
   description: "Shows This!",
 
   async execute(client, message, args, cmd) {
+ 
+    await message.channel.sendTyping();
 
     const helpEmbed = new Discord.EmbedBuilder()
       .setColor(config.MainColor)
