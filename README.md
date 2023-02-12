@@ -1,9 +1,11 @@
 <h1 align="center">Chat GPT Discord Bot</h1>
 
-[![GitHub stars](https://img.shields.io/github/stars/iTzArshia/GPT-Discord-Bot.svg)](https://github.com/iTzArshia/GPT-Discord-Bot/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/iTzArshia/GPT-Discord-Bot.svg)](https://github.com/iTzArshia/GPT-Discord-Bot/network)
-[![iTz Development Discord](https://badgen.net/discord/members/nKrBshQvcK)](https://discord.gg/nKrBshQvcK)
-[![iTz Club Discord](https://badgen.net/discord/members/8hr9CRqmfc)](https://discord.gg/8hr9CRqmfc)
+<div align="center">
+    <a href="https://github.com/iTzArshia/GPT-Discord-Bot/stargazers"> <img src="https://img.shields.io/github/stars/iTzArshia/GPT-Discord-Bot.svg" alt="GitHub stars"/> </a>
+    <a href="https://github.com/iTzArshia/GPT-Discord-Bot/network"> <img src="https://img.shields.io/github/forks/iTzArshia/GPT-Discord-Bot.svg" alt="GitHub forks"/> </a>
+    <a href="https://discord.gg/nKrBshQvcK"> <img src="https://badgen.net/discord/members/nKrBshQvcK" alt="iTz Development Discord"/> </a>
+    <a href="https://discord.gg/8hr9CRqmfc"> <img src="https://badgen.net/discord/members/8hr9CRqmfc" alt="iTz Club Discord"/> </a>
+</div>
 
 GPT Discord Bot is the original Discord AI bot written in **[JavaScript](https://www.javascript.com/)**, using the **[Discord.js V14](discord.js.org/)** library powered by [OpenAI](https://openai.com/)'s [ChatGPT](https://chat.openai.com). It could answer your questions and draw your imaginations and other features which you can see example in **[Screenshots](https://github.com/iTzArshia/GPT-Discord-Bot/edit/main/README.md#-screenshots)**!
 ## 🚧 Requirements
