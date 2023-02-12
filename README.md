@@ -5,7 +5,7 @@
 [![iTz Development Discord](https://badgen.net/discord/members/nKrBshQvcK)](https://discord.gg/nKrBshQvcK)
 [![iTz Club Discord](https://badgen.net/discord/members/8hr9CRqmfc)](https://discord.gg/8hr9CRqmfc)
 
-GPT Discord Bot is the original Discord AI bot written in **[JavaScript](https://www.javascript.com/)**, using the **[Discord.js V14](discord.js.org/)** library powered by [OpenAI](https://openai.com/)'s [ChatGPT](https://chat.openai.com). It could answer your questions and draw your imaginations which you can see example in **[Screenshots](https://github.com/iTzArshia/GPT-Discord-Bot/edit/main/README.md#-screenshots)**!
+GPT Discord Bot is the original Discord AI bot written in **[JavaScript](https://www.javascript.com/)**, using the **[Discord.js V14](discord.js.org/)** library powered by [OpenAI](https://openai.com/)'s [ChatGPT](https://chat.openai.com). It could answer your questions and draw your imaginations and other features which you can see example in **[Screenshots](https://github.com/iTzArshia/GPT-Discord-Bot/edit/main/README.md#-screenshots)**!
 ## 🚧 Requirements
 1. Discord Bot Token **[Guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)**  
    1.1. Enable "Message Content Intent" in Discord Developer Portal
@@ -31,13 +31,18 @@ Open your terminal and install required packages with
 npm install
 ```
 After installation finishes run `node register.js` to deploy slash commands and then run `node index.js` in terminal to start the bot.
-## ✨Latest Updates
+## 🆕Latest Updates
 This is the first version of the bot, in the feature when I update the bot I will write updates here.
+## 💫 Features
+`/Ask` / `!Ask` : Answers your questions! using `text-davinci-003`
+
+`/Imagine` / `!Imagine` : Draw your imaginations! using `Dall.E 2`
+
+`/Translate` / `!Translate` : Translate your texts in any language to Englinsh imaginations! using `text-davinci-003`
 ## 📸 Screenshots
 ![Commands Preview](https://user-images.githubusercontent.com/89854127/218297968-d51ce180-ac1a-4897-b2bd-c67449fc73b5.png)
 ## ❤️ Donations
 You can **[support](https://reymit.ir/itz_arshia)** me by donating if you like the project!
 > Only available for Iranians :(
-
 #
 Made with ❤️ and JavaScript, Don't Forget to ⭐
