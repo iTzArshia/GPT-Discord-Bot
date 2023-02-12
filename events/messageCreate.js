@@ -7,7 +7,7 @@ module.exports = async (client, message) => {
 
     const args = message.content.slice(config.Prefix.length).split(/ +/);
     const cmd = args.shift().toLowerCase();
-    const command = client.MessageCommands.get(cmd) || client.MessageCommands.find(c => c.aliases && c.aliases.includes(cmd));
+    const command = client.MessageCommands.get(cmd) || client.MessageCommands.find(c => c.aliases && c.aliases.map(a => a.toLowerCase()).includes(cmd));
     if (command) {
 
         try {
