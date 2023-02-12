@@ -7,6 +7,7 @@
 */
 
 const Discord = require('discord.js');
+const chalk = require('chalk');
 const fs = require('node:fs');
 const config = require('./config.json');
 
@@ -20,7 +21,7 @@ const client = new Discord.Client({
 });
 
 // Event Handler
-console.log(`Loading Events`);
+console.log(chalk.bold.greenBright('Loading Events'));
 const events = fs.readdirSync(`./events/`).filter(file => file.endsWith('.js'));
 for (const file of events) {
   const event = require(`./events/${file}`);
@@ -29,7 +30,7 @@ for (const file of events) {
 };
 
 // Message Command Handler
-console.log(`Loading Message Commands`);
+console.log(chalk.bold.greenBright('Loading Message Commands'));
 client.MessageCommands = new Discord.Collection();
 const messageCommands = fs.readdirSync(`./commands/messages/`).filter(files => files.endsWith('.js'));
 for (const file of messageCommands) {
@@ -39,7 +40,7 @@ for (const file of messageCommands) {
 };
 
 // Slash Command Handler
-console.log(`Loading Slash Commands`);
+console.log(chalk.bold.greenBright('Loading Slash Commands'));
 client.SlashCommands = new Discord.Collection();
 const slashCommands = fs.readdirSync(`./commands/interactions/`).filter(files => files.endsWith('.js'));
 for (const file of slashCommands) {
@@ -50,17 +51,17 @@ for (const file of slashCommands) {
 
 // Anti Crash
 process.on('unhandledRejection', (reason, p) => {
-  console.log('[antiCrash] :: Unhandled Rejection/Catch');
+  console.log(chalk.bold.redBright('[antiCrash] :: Unhandled Rejection/Catch'));
   console.log(reason?.stack, p);
 });
 
 process.on("uncaughtException", (err, origin) => {
-  console.log('[antiCrash] :: Uncaught Exception/Catch');
+  console.log(chalk.bold.redBright('[antiCrash] :: ncaught Exception/Catch'));
   console.log(err?.stack, origin);
 });
 
 process.on('uncaughtExceptionMonitor', (err, origin) => {
-  console.log('[antiCrash] :: Uncaught Exception/Catch (MONITOR)');
+  console.log(chalk.bold.redBright('[antiCrash] :: Uncaught Exception/Catch (MONITOR)'));
   console.log(err?.stack, origin);
 });
 
