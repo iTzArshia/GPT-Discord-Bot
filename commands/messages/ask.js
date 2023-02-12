@@ -6,7 +6,7 @@ const config = require('../../config.json');
 module.exports = {
     name: "Ask",
     aliases: ['A', 'GPT', 'Chat'],
-    description: "Answers your questions",
+    description: "Answers your questions!",
 
     async execute(client, message, args, cmd) {
 
