@@ -3,8 +3,8 @@ const openAI = require('openai');
 const config = require('../../config.json');
 
 module.exports = {
-    name: "imagine",
-    aliases: ['i', 'd', 'draw'],
+    name: "Imagine",
+    aliases: ['I', 'D', 'Draw'],
     description: "Draw your imaginations",
 
     async execute(client, message, args, cmd) {
