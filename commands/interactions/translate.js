@@ -14,40 +14,29 @@ module.exports = {
         )
         .addStringOption(option => option
             .setName("language")
-            .setDescription("What language would you like me to translate your prompt into?")
-            .setChoices(
-                { name: 'English', value: 'English' },
-                { name: 'Spanish', value: 'Spanish' },
-                { name: 'French', value: 'French' },
-                { name: 'Chinese', value: 'Chinese' },
-                { name: 'Bulgarian', value: 'Bulgarian' },
-                { name: 'Czech', value: 'Czech' },
-                { name: 'Danish', value: 'Danish' },
-                { name: 'German', value: 'German' },
-                { name: 'Greek', value: 'Greek' },
-                { name: 'Finnish', value: 'Finnish' },
-                { name: 'Hungarian', value: 'Hungarian' },
-                { name: 'Indonesian', value: 'Indonesian' },
-                { name: 'Italian', value: 'Italian' },
-                { name: 'Japanese', value: 'Japanese' },
-                { name: 'Lithuanian', value: 'Lithuanian' },
-                { name: 'Latvian', value: 'Latvian' },
-                { name: 'Dutch', value: 'Dutch' },
-                { name: 'Polish', value: 'Polish' },
-                { name: 'Portuguese', value: 'Portuguese' },
-                { name: 'Romanian', value: 'Romanian' },
-                { name: 'Russian', value: 'Russian' },
-                { name: 'Slovak', value: 'Slovak' },
-                { name: 'Swedish', value: 'Swedish' },
-                { name: 'Turkish', value: 'Turkish' },
-                { name: 'Ukrainian', value: 'Ukrainian' }
+            .setDescription("What language would you like me to translate your prompt into? (Default: English)")
+            .setRequired(false)
+        )
+        .addStringOption(option => option
+            .setName('ephemeral')
+            .setDescription('Hides the bot\'s reply from others. (Default: Disable)')
+            .addChoices(
+                {
+                    name: 'Enable',
+                    value: 'Enable'
+                },
+                {
+                    name: 'Disable',
+                    value: 'Disable'
+                }
             )
-            .setRequired(true)
         ),
 
     async execute(client, interaction) {
 
-        await interaction.deferReply();
+        const ephemeralChoice = interaction.options.getString('ephemeral');
+        const ephemeral = ephemeralChoice === 'Enable' ? true : false;
+        await interaction.deferReply({ ephemeral: ephemeral });
 
         const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
         const openai = new openAI.OpenAIApi(configuration);
