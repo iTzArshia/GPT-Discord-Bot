@@ -11,11 +11,27 @@ module.exports = {
             .setName("prompt")
             .setDescription("What is your imagine?")
             .setRequired(true)
+        )
+        .addStringOption(option => option
+            .setName('ephemeral')
+            .setDescription('Hides the bot\'s reply from others. (Default: Disable)')
+            .addChoices(
+                {
+                    name: 'Enable',
+                    value: 'Enable'
+                },
+                {
+                    name: 'Disable',
+                    value: 'Disable'
+                }
+            )
         ),
 
     async execute(client, interaction) {
 
-        await interaction.deferReply();
+        const ephemeralChoice = interaction.options.getString('ephemeral');
+        const ephemeral = ephemeralChoice === 'Enable' ? true : false;
+        await interaction.deferReply({ ephemeral: ephemeral });
 
         const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
         const openai = new openAI.OpenAIApi(configuration);
