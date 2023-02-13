@@ -4,11 +4,27 @@ const config = require('../../config.json');
 module.exports = {
   data: new Discord.SlashCommandBuilder()
     .setName("help")
-    .setDescription("Shows the Bot's commands list and information."),
+    .setDescription("Shows the Bot's commands list and information.")
+    .addStringOption(option => option
+      .setName('ephemeral')
+      .setDescription('Hides the bot\'s reply from others. (Default: Disable)')
+      .addChoices(
+        {
+          name: 'Enable',
+          value: 'Enable'
+        },
+        {
+          name: 'Disable',
+          value: 'Disable'
+        }
+      )
+    ),
 
   async execute(client, interaction) {
-  
-    await interaction.deferReply();
+
+    const ephemeralChoice = interaction.options.getString('ephemeral');
+    const ephemeral = ephemeralChoice === 'Enable' ? true : false;
+    await interaction.deferReply({ ephemeral: ephemeral });
 
     const helpEmbed = new Discord.EmbedBuilder()
       .setColor(config.MainColor)
