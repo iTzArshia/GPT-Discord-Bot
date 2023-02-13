@@ -11,11 +11,27 @@ module.exports = {
             .setName("prompt")
             .setDescription("What is your question?")
             .setRequired(true)
+        )
+        .addStringOption(option => option
+            .setName('ephemeral')
+            .setDescription('Hides the bot\'s reply from others. (Default: Disable)')
+            .addChoices(
+                {
+                    name: 'Enable',
+                    value: 'Enable'
+                },
+                {
+                    name: 'Disable',
+                    value: 'Disable'
+                }
+            )
         ),
 
     async execute(client, interaction) {
 
-        await interaction.deferReply();
+        const ephemeralChoice = interaction.options.getString('ephemeral');
+        const ephemeral = ephemeralChoice === 'Enable' ? true : false;
+        await interaction.deferReply({ ephemeral: ephemeral });
 
         const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
         const openai = new openAI.OpenAIApi(configuration);
@@ -29,7 +45,7 @@ module.exports = {
             prompt: prompt,
             max_tokens: 2048,
             temperature: 0,
-            top_p:1
+            top_p: 1
 
         }).then(async (response) => {
 
