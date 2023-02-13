@@ -28,66 +28,107 @@ module.exports = {
         const openai = new openAI.OpenAIApi(configuration);
 
         const question = args.join(" ");
-        const prompt = `I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is “${question}”`;
 
-        openai.createCompletion({
+        openai.createModeration({
 
-            model: 'text-davinci-003',
-            prompt: prompt,
-            max_tokens: 2048,
-            temperature: 0.77,
-            top_p: 0.9,
-            frequency_penalty: 0.95,
-            presence_penalty: 0.95
+            input: question
 
         }).then(async (response) => {
 
-            const answer = response.data.choices[0].text;
-            const usage = response.data.usage;
+            const data = response.data.results[0];
+            if (data.flagged) {
 
-            if (answer.length < 4096) {
+                function replaces(string) {
+                    return string
+                        .replace('sexual', 'Sexual')
+                        .replace('hate', 'Hate')
+                        .replace('violence', 'Violence')
+                        .replace('self-harm', 'Self-Harm')
+                        .replace('sexual/minors', 'Sexual/Minors')
+                        .replace('hate/threatening', 'Hate/Threatening')
+                        .replace('violence/graphic', 'Violence/Graphic')
+                };
 
-                const embed = new Discord.EmbedBuilder()
-                    .setColor(config.MainColor)
+                const logEmbed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
                     .setAuthor({
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: message.author.displayAvatarURL()
                     })
-                    .setDescription(answer)
-                    .setFooter({
-                        text: `Consumed ${usage.total_tokens} (Q: ${usage.prompt_tokens} | A: ${usage.completion_tokens}) Tokens`,
-                        iconURL: client.user.displayAvatarURL()
-                    });
+                    .setDescription(`Your request was rejected as a result of our safty system. Your prompt may contain text that is not allowd by our safty system\n\n**Flags:** ${Object.keys(data.categories).filter(key => data.categories[key]).map(flag => replaces(flag)).join(", ")}`);
 
-                await message.reply({ embeds: [embed] });
+                return message.reply({ embeds: [logEmbed] });
 
             } else {
 
-                const attachment = new Discord.AttachmentBuilder(
-                    Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
-                    { name: 'response.txt' }
-                );
-                await message.reply({ files: [attachment] });
+                const prompt = `I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is “${question}”`;
+
+                openai.createCompletion({
+
+                    model: 'text-davinci-003',
+                    prompt: prompt,
+                    max_tokens: 2048,
+                    temperature: 0.77,
+                    top_p: 0.9,
+                    frequency_penalty: 0.95,
+                    presence_penalty: 0.95
+
+                }).then(async (response) => {
+
+                    const answer = response.data.choices[0].text;
+                    const usage = response.data.usage;
+
+                    if (answer.length < 4096) {
+
+                        const embed = new Discord.EmbedBuilder()
+                            .setColor(config.MainColor)
+                            .setAuthor({
+                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                iconURL: message.author.displayAvatarURL()
+                            })
+                            .setDescription(answer)
+                            .setFooter({
+                                text: `Consumed ${usage.total_tokens} (Q: ${usage.prompt_tokens} | A: ${usage.completion_tokens}) Tokens`,
+                                iconURL: client.user.displayAvatarURL()
+                            });
+
+                        await message.reply({ embeds: [embed] });
+
+                    } else {
+
+                        const attachment = new Discord.AttachmentBuilder(
+                            Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
+                            { name: 'response.txt' }
+                        );
+                        await message.reply({ files: [attachment] });
+
+                    };
+
+                }).catch(async (error) => {
+
+                    console.error(chalk.bold.redBright(error));
+
+                    if (error.message) {
+
+                        const embed = new Discord.EmbedBuilder()
+                            .setColor(config.ErrorColor)
+                            .setAuthor({
+                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                iconURL: message.author.displayAvatarURL()
+                            })
+                            .setDescription(error.message);
+
+                        await message.reply({ embeds: [embed] }).catch(() => null);
+
+                    };
+
+                });
 
             };
 
         }).catch(async (error) => {
 
             console.error(chalk.bold.redBright(error));
-
-            if (error.message) {
-
-                const embed = new Discord.EmbedBuilder()
-                    .setColor(config.ErrorColor)
-                    .setAuthor({
-                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                        iconURL: message.author.displayAvatarURL()
-                    })
-                    .setDescription(error.message);
-
-                await message.reply({ embeds: [embed] }).catch(() => null);
-
-            };
 
         });
 
