@@ -28,8 +28,8 @@ module.exports = {
         const openai = new openAI.OpenAIApi(configuration);
 
         const question = args.join(" ");
-        const prompt = `||>System: Instructions for ${client.user.username}: Please act as an English translator. spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it to English and then answer in the corrected and improved version of my text in English. I want you to replace my simplified words and sentences with more beautiful and elegant, upper level English words and sentences. Retain the meaning, but elevate them into a higher literacy competency. I want you to only reply to the correction, the improvements and nothing else, do not write any additional explanations.\n||>Messages:\n||>${message.author.username}: ${question}\n||>${client.user.username}:`;
-
+        const prompt = `I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is “${question}”`;
+        
         openai.createCompletion({
 
             model: 'text-davinci-003',
@@ -37,8 +37,8 @@ module.exports = {
             max_tokens: 2048,
             temperature: 0.77,
             top_p: 0.9,
-            frequency_penalty:0.95,
-            presence_penalty:0.95
+            frequency_penalty: 0.95,
+            presence_penalty: 0.95
 
         }).then(async (response) => {
 
