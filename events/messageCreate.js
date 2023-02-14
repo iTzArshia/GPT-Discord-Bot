@@ -211,20 +211,20 @@ module.exports = async (client, message) => {
 
                     if (buttons.includes('Message')) {
 
-                        const jumpButton = new Discord.ButtonBuilder()
-                            .setLabel(`Jump to Flagged Message`)
-                            .setStyle(Discord.ButtonStyle.Link)
-                            .setURL(message.url);
-
                         const deleteMessageButton = new Discord.ButtonBuilder()
                             .setLabel(`Delete Flagged Message`)
                             .setStyle(Discord.ButtonStyle.Danger)
                             .setCustomId(`deleteMessage-${message.channelId}-${message.id}`);
 
+                        const jumpButton = new Discord.ButtonBuilder()
+                            .setLabel(`Jump to Flagged Message`)
+                            .setStyle(Discord.ButtonStyle.Link)
+                            .setURL(message.url);
+
                         const messageRow = new Discord.ActionRowBuilder()
                             .addComponents([
-                                jumpButton,
-                                deleteMessageButton
+                                deleteMessageButton,
+                                jumpButton
                             ]);
 
                         rows.push(messageRow);

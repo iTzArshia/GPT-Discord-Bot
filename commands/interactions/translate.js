@@ -59,7 +59,7 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: interaction.user.displayAvatarURL()
                     })
-                    .setDescription(`Your request was rejected as a result of our Safety system. Your prompt may contain text that is not allowd by our Safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
+                    .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
                 return interaction.editReply({ embeds: [logEmbed] });
 
