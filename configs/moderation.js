@@ -1,11 +1,11 @@
 module.exports.moderation = {
     // True: Enable the Moderation model
     // False: Disable the Moderation model
-    State: true,
+    State: false,
     // a list of ignored channels IDs which bot ignore messages there
     IgnoredChannels: ["0000000000000000000", "1111111111111111111", "2222222222222222222"],
     // Log's Channel ID it could be Text/Announcement/Voice/Thread/Post Channel ID
-    LogChannel: "1060931287587749908",
+    LogChannel: "0000000000000000000",
     // Log's Embed Color it could be a #HexCode or resolvable text like: "Red"
     LogColor: "Red",
     // a list of roles which can use moderation buttons without having permissions
