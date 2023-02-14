@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const func = require('../../utils/functions');
 const config = require('../../configs/config.json');
 
 module.exports = {
@@ -40,7 +41,7 @@ module.exports = {
                 },
                 {
                     name: `💾 Memory:`,
-                    value: `${Math.round((process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}MB`,
+                    value: `${func.numberWithCommas(Math.round((process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)))}MB`,
                     inline: true
                 },
                 {
