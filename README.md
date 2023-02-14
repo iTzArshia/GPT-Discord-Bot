@@ -7,15 +7,15 @@
     <a href="https://discord.gg/8hr9CRqmfc"> <img src="https://badgen.net/discord/members/8hr9CRqmfc" alt="iTz Club Discord"/> </a>
 </div>
 
-GPT Discord Bot is the original Discord AI bot written in **[JavaScript](https://www.javascript.com/)**, using the **[Discord.js V14](discord.js.org/)** library powered by [OpenAI](https://openai.com/)'s [ChatGPT](https://chat.openai.com). It could answer your questions and draw your imaginations and other features which you can see example in **[Screenshots](https://github.com/iTzArshia/GPT-Discord-Bot/edit/main/README.md#-screenshots)**!
+GPT Discord Bot is the original Discord AI bot written in **[JavaScript](https://www.javascript.com/)**, using the **[Discord.js V14](discord.js.org/)** library powered by [OpenAI](https://openai.com/)'s models. It has different features such as answering to all of your questions or draw your imaginations and even translate your prompts from any language to any other language you want and also an configurable Auto Moderation system powered by AI which watch all of your server messages (if you want, you can turn it off/on) and report flagged messages to Admins and they can moderate it and other features which you can see example in **[Screenshots](https://github.com/iTzArshia/GPT-Discord-Bot/edit/main/README.md#-screenshots)**!
 ## 🚧 Requirements
 1. Discord Bot Token **[Guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)**  
-   1.1. Enable "Message Content Intent" in Discord Developer Portal
+   1.1. Enable "Message Content Intent" and "Server Members Intent" in Discord Developer Portal
 2. OpenAI API Key
 3. **[Node.js 16.9.0](https://nodejs.org/en/download/)** or higher
 # 🚀 Getting Started
 ## ⚙️ Configuration
-Go to `config.json` and fill out the values:
+Go to `config.json` in `configs` folder and fill out the values:
 ```json
 {
     "Prefix": "Put anything you want as prefix",
@@ -27,20 +27,22 @@ Go to `config.json` and fill out the values:
 }
 ```
 ⚠️ **Note: Never commit or share your token publicly** ⚠️
+
+and if you want to use moderation model fill and config `moderation.js` in `configs` folder (Information on how to configure it is available in the file itself)
 ## 🧠 installation
 Open your terminal and install required packages with
 ```sh
 npm install
 ```
 After installation finishes run `node register.js` to deploy slash commands and then run `node index.js` in terminal to start the bot.
-## 🆕Latest Updates
-This is the first version of the bot, in the feature when I update the bot I will write updates here.
 ## 💫 Features
-`/Ask` / `!Ask` : Answers your questions! using `text-davinci-003`
+`/Ask` / `!Ask` : Answers your questions!
 
-`/Imagine` / `!Imagine` : Draw your imaginations! using `Dall.E 2`
+`/Imagine` / `!Imagine` : Draw your imaginations!
 
-`/Translate` / `!Translate` : Translate your texts in any language to Englinsh imaginations! using `text-davinci-003`
+`/Translate` / `!Translate` : Translate your texts in any language to any language you want
+
+`Auto Moderation`
 ## 📸 Screenshots
 ![Commands Preview](https://user-images.githubusercontent.com/89854127/218297968-d51ce180-ac1a-4897-b2bd-c67449fc73b5.png)
 ## ❤️ Donations
