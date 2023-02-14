@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
-const config = require('../../config.json');
 const func = require('../../utils/functions');
 const config = require('../../configs/config.json');
 
