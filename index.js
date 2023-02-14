@@ -9,12 +9,13 @@
 const Discord = require('discord.js');
 const chalk = require('chalk');
 const fs = require('node:fs');
-const config = require('./config.json');
+const config = require('./configs/config.json');
 
 // Discord Client Constructor
 const client = new Discord.Client({
   intents: [
     Discord.GatewayIntentBits.Guilds,
+    Discord.GatewayIntentBits.GuildMembers,
     Discord.GatewayIntentBits.GuildMessages,
     Discord.GatewayIntentBits.MessageContent
   ]
