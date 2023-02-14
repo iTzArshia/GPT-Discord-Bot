@@ -53,17 +53,6 @@ module.exports = {
             const data = response.data.results[0];
             if (data.flagged) {
 
-                function replaces(string) {
-                    return string
-                        .replace('sexual', 'Sexual')
-                        .replace('hate', 'Hate')
-                        .replace('violence', 'Violence')
-                        .replace('self-harm', 'Self-Harm')
-                        .replace('sexual/minors', 'Sexual/Minors')
-                        .replace('hate/threatening', 'Hate/Threatening')
-                        .replace('violence/graphic', 'Violence/Graphic')
-                };
-
                 const logEmbed = new Discord.EmbedBuilder()
                     .setColor(config.ErrorColor)
                     .setAuthor({
