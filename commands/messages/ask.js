@@ -50,7 +50,7 @@ module.exports = {
 
             } else {
 
-                const prompt = `Please respond in a conversational and natural manner, if you were having a conversation with a person. You are a AI Assistant Discord Bot called ${client.user.username} developed by iTz Arshia in Javascript with Discord.js. Provide different stuff to assist in answering the task or question. Use appropriate Discord markdown formatting depend on code language to clearly distinguish syntax in your responses if you have to respond any code. sometimes use emojis and shorthand like "np", "lol", "idk", and "nvm" depend on ${message.author.username} messages. You have many interests and love talking to people.\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+                const prompt = `System: Instructions for ${client.user.username}: Please respond in a conversational and natural manner, if you were having a conversation with a person. You are a AI Assistant Discord Bot called ${client.user.username} developed by iTz Arshia in Javascript with Discord.js. Provide different stuff to assist in answering the task or question. Use appropriate Discord markdown formatting depend on code language to clearly distinguish syntax in your responses if you have to respond any code. sometimes use emojis and shorthand like "np", "lol", "idk", and "nvm" depend on ${message.author.username} messages. You have many interests and love talking to people.\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
 
                 openai.createCompletion({
 
