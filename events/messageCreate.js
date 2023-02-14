@@ -11,12 +11,42 @@ module.exports = async (client, message) => {
     const command = client.MessageCommands.get(cmd) || client.MessageCommands.find(c => c.aliases && c.aliases.map(a => a.toLowerCase()).includes(cmd));
     if (command) {
 
-        try {
-            command.execute(client, message, args, cmd);
-        } catch (error) {
-            console.error(chalk.bold.redBright(error));
+        };
+
+        // Command Handler
+        if (message.content.toLowerCase().startsWith(config.Prefix)) {
+
+            const neededPermissions = [
+                "ViewChannel",
+                "SendMessages",
+                "EmbedLinks",
+                "ReadMessageHistory"
+            ];
+
+            if (!message.channel.permissionsFor(message.guild.members.me).has(neededPermissions)) return;
+
+            const args = message.content.slice(config.Prefix.length).split(/ +/);
+            const cmd = args.shift().toLowerCase();
+            const command = client.MessageCommands.get(cmd) || client.MessageCommands.find(c => c.aliases && c.aliases.map(a => a.toLowerCase()).includes(cmd));
+
+            if (command) {
+
+                try {
+                    command.execute(client, message, args, cmd);
+                } catch (error) {
+                    console.error(chalk.bold.redBright(error));
+                };
+
+                try {
+                    command.execute(client, message, args, cmd);
+                } catch (error) {
+                    console.error(chalk.bold.redBright(error));
+                };
+
+            };
+
         };
 
     };
-
+    
 };
