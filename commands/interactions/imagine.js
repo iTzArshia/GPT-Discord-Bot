@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
-const config = require('../../config.json');
+const config = require('../../configs/config.json');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
