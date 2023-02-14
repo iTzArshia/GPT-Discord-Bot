@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
 const config = require('../../config.json');
+const func = require('../../utils/functions');
+const config = require('../../configs/config.json');
 
 module.exports = {
     name: "Ask",
@@ -54,7 +56,7 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: message.author.displayAvatarURL()
                     })
-                    .setDescription(`Your request was rejected as a result of our safty system. Your prompt may contain text that is not allowd by our safty system\n\n**Flags:** ${Object.keys(data.categories).filter(key => data.categories[key]).map(flag => replaces(flag)).join(", ")}`);
+                    .setDescription(`Your request was rejected as a result of our Safety system. Your prompt may contain text that is not allowd by our Safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
                 return message.reply({ embeds: [logEmbed] });
 
