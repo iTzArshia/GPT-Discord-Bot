@@ -22,104 +22,163 @@ module.exports = {
 
             return await message.reply({ embeds: [embed] });
 
+        } else {
+
+            const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
+            const openai = new openAI.OpenAIApi(configuration);
+
+            const question = args.join(" ");
+
+            openai.createModeration({
+
+                input: question
+
+            }).then(async (response) => {
+
+                const data = response.data.results[0];
+                if (data.flagged) {
+
+                    const embed = new Discord.EmbedBuilder()
+                        .setColor(config.ErrorColor)
+                        .setAuthor({
+                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                            iconURL: message.author.displayAvatarURL()
+                        })
+                        .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
+
+                    return message.reply({ embeds: [embed] });
+
+                } else {
+
+                    const prompt = `System: Instructions for ${client.user.username}: Please respond in a conversational and natural manner, if you were having a conversation with a person. You are a AI Assistant Discord Bot called ${client.user.username} developed by iTz Arshia in Javascript with Discord.js. Provide different stuff to assist in answering the task or question. Use appropriate Discord markdown formatting depend on code language to clearly distinguish syntax in your responses if you have to respond any code. sometimes use emojis and shorthand like "np", "lol", "idk", and "nvm" depend on ${message.author.username} messages. You have many interests and love talking to people.\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+
+                    openai.createCompletion({
+
+                        model: 'text-davinci-003',
+                        prompt: prompt,
+                        max_tokens: 2048,
+                        temperature: 0.7,
+                        top_p: 1,
+                        frequency_penalty: 0.0,
+                        presence_penalty: 0.0
+
+                    }).then(async (response) => {
+
+                        const answer = response.data.choices[0].text;
+                        const usage = response.data.usage;
+
+                        openai.createModeration({
+
+                            input: answer
+
+                        }).then(async (response) => {
+
+                            const data = response.data.results[0];
+                            if (data.flagged) {
+
+                                const embed = new Discord.EmbedBuilder()
+                                    .setColor(config.ErrorColor)
+                                    .setAuthor({
+                                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                        iconURL: message.author.displayAvatarURL()
+                                    })
+                                    .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
+
+                                return message.reply({ embeds: [embed] });
+
+                            } else {
+
+                                if (answer.length < 4096) {
+
+                                    const embed = new Discord.EmbedBuilder()
+                                        .setColor(config.MainColor)
+                                        .setAuthor({
+                                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                            iconURL: message.author.displayAvatarURL()
+                                        })
+                                        .setDescription(answer)
+                                        .setFooter({
+                                            text: `Consumed ${usage.total_tokens} (Q: ${usage.prompt_tokens} | A: ${usage.completion_tokens}) Tokens`,
+                                            iconURL: client.user.displayAvatarURL()
+                                        });
+
+                                    await message.reply({ embeds: [embed] });
+
+                                } else {
+
+                                    const attachment = new Discord.AttachmentBuilder(
+                                        Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
+                                        { name: 'response.txt' }
+                                    );
+                                    await message.reply({ files: [attachment] });
+
+                                };
+
+                            };
+
+                        }).catch(async (error) => {
+
+                            console.error(chalk.bold.redBright(error));
+
+                            if (error.message) {
+
+                                const embed = new Discord.EmbedBuilder()
+                                    .setColor(config.ErrorColor)
+                                    .setAuthor({
+                                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                        iconURL: message.author.displayAvatarURL()
+                                    })
+                                    .setDescription(error.message);
+
+                                await message.reply({ embeds: [embed] }).catch(() => null);
+
+                            };
+
+                        });
+
+                    }).catch(async (error) => {
+
+                        console.error(chalk.bold.redBright(error));
+
+                        if (error.message) {
+
+                            const embed = new Discord.EmbedBuilder()
+                                .setColor(config.ErrorColor)
+                                .setAuthor({
+                                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                    iconURL: message.author.displayAvatarURL()
+                                })
+                                .setDescription(error.message);
+
+                            await message.reply({ embeds: [embed] }).catch(() => null);
+
+                        };
+
+                    });
+
+                };
+
+            }).catch(async (error) => {
+
+                console.error(chalk.bold.redBright(error));
+
+                if (error.message) {
+
+                    const embed = new Discord.EmbedBuilder()
+                        .setColor(config.ErrorColor)
+                        .setAuthor({
+                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                            iconURL: message.author.displayAvatarURL()
+                        })
+                        .setDescription(error.message);
+
+                    await message.reply({ embeds: [embed] }).catch(() => null);
+
+                };
+
+            });
+
         };
-
-        const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
-        const openai = new openAI.OpenAIApi(configuration);
-
-        const question = args.join(" ");
-
-        openai.createModeration({
-
-            input: question
-
-        }).then(async (response) => {
-
-            const data = response.data.results[0];
-            if (data.flagged) {
-
-                const logEmbed = new Discord.EmbedBuilder()
-                    .setColor(config.ErrorColor)
-                    .setAuthor({
-                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                        iconURL: message.author.displayAvatarURL()
-                    })
-                    .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
-
-                return message.reply({ embeds: [logEmbed] });
-
-            } else {
-
-                const prompt = `System: Instructions for ${client.user.username}: Please respond in a conversational and natural manner, if you were having a conversation with a person. You are a AI Assistant Discord Bot called ${client.user.username} developed by iTz Arshia in Javascript with Discord.js. Provide different stuff to assist in answering the task or question. Use appropriate Discord markdown formatting depend on code language to clearly distinguish syntax in your responses if you have to respond any code. sometimes use emojis and shorthand like "np", "lol", "idk", and "nvm" depend on ${message.author.username} messages. You have many interests and love talking to people.\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
-
-                openai.createCompletion({
-
-                    model: 'text-davinci-003',
-                    prompt: prompt,
-                    max_tokens: 2048,
-                    temperature: 0.7,
-                    top_p: 1,
-                    frequency_penalty: 0.0,
-                    presence_penalty: 0.0
-
-                }).then(async (response) => {
-
-                    const answer = response.data.choices[0].text;
-                    const usage = response.data.usage;
-
-                    if (answer.length < 4096) {
-
-                        const embed = new Discord.EmbedBuilder()
-                            .setColor(config.MainColor)
-                            .setAuthor({
-                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                                iconURL: message.author.displayAvatarURL()
-                            })
-                            .setDescription(answer)
-                            .setFooter({
-                                text: `Consumed ${usage.total_tokens} (Q: ${usage.prompt_tokens} | A: ${usage.completion_tokens}) Tokens`,
-                                iconURL: client.user.displayAvatarURL()
-                            });
-
-                        await message.reply({ embeds: [embed] });
-
-                    } else {
-
-                        const attachment = new Discord.AttachmentBuilder(
-                            Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
-                            { name: 'response.txt' }
-                        );
-                        await message.reply({ files: [attachment] });
-
-                    };
-
-                }).catch(async (error) => {
-
-                    console.error(chalk.bold.redBright(error));
-
-                    if (error.message) {
-
-                        const embed = new Discord.EmbedBuilder()
-                            .setColor(config.ErrorColor)
-                            .setAuthor({
-                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                                iconURL: message.author.displayAvatarURL()
-                            })
-                            .setDescription(error.message);
-
-                        await message.reply({ embeds: [embed] }).catch(() => null);
-
-                    };
-
-                });
-
-            };
-
-        }).catch(async (error) => {
-
-            console.error(chalk.bold.redBright(error));
-
-        });
 
     },
 
