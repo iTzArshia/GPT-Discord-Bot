@@ -68,7 +68,9 @@ module.exports = {
                     prompt: prompt,
                     max_tokens: 2048,
                     temperature: 0.7,
-                    top_p: 1
+                    top_p: 1,
+                    frequency_penalty: 0.0,
+                    presence_penalty: 0.0
 
                 }).then(async (response) => {
 
