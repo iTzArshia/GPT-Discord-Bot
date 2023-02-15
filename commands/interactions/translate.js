@@ -61,7 +61,7 @@ module.exports = {
                     })
                     .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
-                return interaction.editReply({ embeds: [logEmbed] });
+                await interaction.editReply({ embeds: [logEmbed] });
 
             } else {
 
@@ -134,6 +134,16 @@ module.exports = {
         }).catch(async (error) => {
 
             console.error(chalk.bold.redBright(error));
+
+            const embed = new Discord.EmbedBuilder()
+                .setColor(config.ErrorColor)
+                .setAuthor({
+                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                    iconURL: interaction.user.displayAvatarURL()
+                })
+                .setDescription(error.message);
+
+            await interaction.editReply({ embeds: [embed] }).catch(() => null);
 
         });
 
