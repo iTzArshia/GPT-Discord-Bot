@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
 const func = require('../../utils/functions');
+const tokenizer = require('../../utils/encoder')
 const config = require('../../configs/config.json');
 
 module.exports = {
@@ -51,12 +52,14 @@ module.exports = {
                 } else {
 
                     const prompt = `System: Instructions for ${client.user.username}: Please respond in a conversational and natural manner, if you were having a conversation with a person. You are a AI Assistant Discord Bot called ${client.user.username} developed by iTz Arshia in Javascript with Discord.js. Provide different stuff to assist in answering the task or question. Use appropriate Discord markdown formatting depend on code language to clearly distinguish syntax in your responses if you have to respond any code. sometimes use emojis and shorthand like "np", "lol", "idk", and "nvm" depend on ${message.author.username} messages. You have many interests and love talking to people.\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+                    const encoded = tokenizer.encode(prompt);
+                    const maxTokens = 4096 - encoded.length;
 
                     openai.createCompletion({
 
                         model: 'text-davinci-003',
                         prompt: prompt,
-                        max_tokens: 2048,
+                        max_tokens: maxTokens,
                         temperature: 0.7,
                         top_p: 1,
                         frequency_penalty: 0.0,
