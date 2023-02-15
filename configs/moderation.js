@@ -1,6 +1,6 @@
 module.exports.moderation = {
-    // True: Enable the Moderation model.
-    // False: Disable the Moderation model.
+    // true: Enable the Moderation model.
+    // false: Disable the Moderation model.
     State: false,
     // A list of channel IDs that the bot ignores messages from.
     IgnoredChannels: ["0000000000000000000", "1111111111111111111", "2222222222222222222"],
@@ -12,16 +12,16 @@ module.exports.moderation = {
     AdminRoles: ["0000000000000000000", "1111111111111111111", "2222222222222222222"],
     // A list of users that can use moderation buttons without having permissions.
     AdminUsers: ["0000000000000000000", "1111111111111111111", "2222222222222222222"],
-    // True: Deletes Flagged Messages automatically.
-    // False: Doesn't delete flagged messages automatically.
+    // true: Deletes Flagged Messages automatically.
+    // false: Doesn't delete flagged messages automatically.
     AutoDelete: {
         "Sexual": false,
         "Hate": false,
         "Violence": false,
         "Self-Harm": false
     },
-    // True: Punishes flagged messages' authors automatically.
-    // False: Doesn't punish flagged messages' authors automatically.
+    // true: Punishes flagged messages' authors automatically.
+    // false: Doesn't punish flagged messages' authors automatically.
     AutoPunish: {
         "Sexual": false,
         "Hate": false,
