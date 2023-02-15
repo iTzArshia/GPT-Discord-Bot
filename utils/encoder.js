@@ -1,4 +1,5 @@
-// This file includes code which was modified from https://github.com/openai/gpt-2 and grabbed from source code of https://github.com/latitudegames/GPT-3-Encoder
+// Credit: https://github.com/latitudegames/GPT-3-Encoder
+// This file includes code which was modified from https://github.com/openai/gpt-2
 const fs = require('node:fs')
 const path = require('path');
 
