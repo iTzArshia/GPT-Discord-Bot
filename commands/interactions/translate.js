@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
 const func = require('../../utils/functions');
+const tokenizer = require('../../utils/encoder')
 const config = require('../../configs/config.json');
 
 module.exports = {
@@ -67,12 +68,14 @@ module.exports = {
 
                 const language = interaction.options.getString("language") || 'English';
                 const prompt = `System: Instructions for ${client.user.username}: Please act as an ${language} translator. spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it to ${language} and then answer in the corrected and improved version of my text in E${language}nglish. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Retain the meaning, but elevate them into a higher literacy competency. I want you to only reply to the correction, the improvements and nothing else, do not write any additional explanations.\nMessages:\n- ${interaction.user.username}: ${question}\n- ${client.user.username}:`
+                const encoded = tokenizer.encode(prompt);
+                const maxTokens = 4096 - encoded.length;
 
                 openai.createCompletion({
 
                     model: 'text-davinci-003',
                     prompt: prompt,
-                    max_tokens: 2048,
+                    max_tokens: maxTokens,
                     temperature: 0.77,
                     top_p: 0.9,
                     frequency_penalty: 0.95,
