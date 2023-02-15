@@ -56,7 +56,7 @@ module.exports = {
                     })
                     .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
-                return interaction.editReply({ embeds: [logEmbed] });
+                await interaction.editReply({ embeds: [logEmbed] });
 
             } else {
 
@@ -77,31 +77,74 @@ module.exports = {
                     const answer = response.data.choices[0].text;
                     const usage = response.data.usage;
 
-                    if (answer.length < 4096) {
+                    openai.createModeration({
 
-                        const embed = new Discord.EmbedBuilder()
-                            .setColor(config.MainColor)
-                            .setAuthor({
-                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                                iconURL: interaction.user.displayAvatarURL()
-                            })
-                            .setDescription(answer)
-                            .setFooter({
-                                text: `Consumed ${usage.total_tokens} (Q: ${usage.prompt_tokens} | A: ${usage.completion_tokens}) Tokens`,
-                                iconURL: client.user.displayAvatarURL()
-                            });
+                        input: answer
 
-                        await interaction.editReply({ embeds: [embed] });
+                    }).then(async (response) => {
 
-                    } else {
+                        const data = response.data.results[0];
+                        if (data.flagged) {
 
-                        const attachment = new Discord.AttachmentBuilder(
-                            Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
-                            { name: 'response.txt' }
-                        );
-                        await interaction.editReply({ files: [attachment] });
+                            const embed = new Discord.EmbedBuilder()
+                                .setColor(config.ErrorColor)
+                                .setAuthor({
+                                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                    iconURL: message.author.displayAvatarURL()
+                                })
+                                .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
-                    };
+                            return message.reply({ embeds: [embed] });
+
+                        } else {
+
+                            if (answer.length < 4096) {
+
+                                const embed = new Discord.EmbedBuilder()
+                                    .setColor(config.MainColor)
+                                    .setAuthor({
+                                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                        iconURL: interaction.user.displayAvatarURL()
+                                    })
+                                    .setDescription(answer)
+                                    .setFooter({
+                                        text: `Consumed ${usage.total_tokens} (Q: ${usage.prompt_tokens} | A: ${usage.completion_tokens}) Tokens`,
+                                        iconURL: client.user.displayAvatarURL()
+                                    });
+
+                                await interaction.editReply({ embeds: [embed] });
+
+                            } else {
+
+                                const attachment = new Discord.AttachmentBuilder(
+                                    Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
+                                    { name: 'response.txt' }
+                                );
+                                await interaction.editReply({ files: [attachment] });
+
+                            };
+
+                        };
+
+                    }).catch(async (error) => {
+
+                        console.error(chalk.bold.redBright(error));
+
+                        if (error.message) {
+
+                            const embed = new Discord.EmbedBuilder()
+                                .setColor(config.ErrorColor)
+                                .setAuthor({
+                                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                    iconURL: message.author.displayAvatarURL()
+                                })
+                                .setDescription(error.message);
+
+                            await message.reply({ embeds: [embed] }).catch(() => null);
+
+                        };
+
+                    });
 
                 }).catch(async (error) => {
 
@@ -128,6 +171,20 @@ module.exports = {
         }).catch(async (error) => {
 
             console.error(chalk.bold.redBright(error));
+
+            if (error.message) {
+
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(error.message);
+
+                await interaction.editReply({ embeds: [embed] }).catch(() => null);
+
+            };
 
         });
 
