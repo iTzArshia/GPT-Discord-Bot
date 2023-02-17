@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
+const fs = require('node:fs');
 const func = require('../../utils/functions');
 const tokenizer = require('../../utils/encoder/encoder');
 const settings = require('../../utils/settings');
@@ -62,19 +63,23 @@ module.exports = {
 
             } else {
 
-                const prompt = `System: Instructions for ${client.user.username}: Please respond in a conversational and natural manner, if you were having a conversation with a person. You are a AI Assistant Discord Bot called ${client.user.username} developed by iTz Arshia in Javascript with Discord.js. Provide different stuff to assist in answering the task or question. Use appropriate Discord markdown formatting depend on code language to clearly distinguish syntax in your responses if you have to respond any code. sometimes use emojis and shorthand like "np", "lol", "idk", and "nvm" depend on ${interaction.user.username} messages. You have many interests and love talking to people.\nMessages:\n- ${interaction.user.username}: ${question}\n- ${client.user.username}:`;
+                const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8");
+                const prompt = chatGPTprompt
+                    .replaceAll('{botUsername}', client.user.username)
+                    .replaceAll('{userUsername}', interaction.user.username)
+                    .replaceAll('{question}', question);
                 const encoded = tokenizer.encode(prompt);
                 const maxTokens = 4096 - encoded.length;
 
                 openai.createCompletion({
 
-                    model: settings.chatGPTask.model,
+                    model: settings.chatGPT.model,
                     prompt: prompt,
                     max_tokens: maxTokens,
-                    temperature: settings.chatGPTask.temprature,
-                    top_p: settings.chatGPTask.top_p,
-                    frequency_penalty: settings.chatGPTask.frequency_penalty,
-                    presence_penalty: settings.chatGPTask.frequency_penalty
+                    temperature: settings.chatGPT.temprature,
+                    top_p: settings.chatGPT.top_p,
+                    frequency_penalty: settings.chatGPT.frequency_penalty,
+                    presence_penalty: settings.chatGPT.frequency_penalty
 
                 }).then(async (response) => {
 
