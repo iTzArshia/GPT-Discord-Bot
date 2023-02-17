@@ -120,7 +120,7 @@ module.exports = {
 
                     console.error(chalk.bold.redBright(error));
 
-                    if (error.message) {
+                    if (error.response) {
 
                         const embed = new Discord.EmbedBuilder()
                             .setColor(config.ErrorColor)
