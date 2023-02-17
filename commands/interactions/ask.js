@@ -93,7 +93,7 @@ module.exports = {
                                 .setColor(config.ErrorColor)
                                 .setAuthor({
                                     name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                                    iconURL: message.author.displayAvatarURL()
+                                    iconURL: interaction.user.displayAvatarURL()
                                 })
                                 .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`)
                                 .setFooter({
@@ -101,7 +101,7 @@ module.exports = {
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
-                            return message.reply({ embeds: [embed] });
+                            return interaction.editReply({ embeds: [embed] });
 
                         } else {
 
