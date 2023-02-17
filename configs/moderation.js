@@ -8,6 +8,12 @@ module.exports.moderation = {
         "1111111111111111111",
         "2222222222222222222"
     ],
+    // A list of user IDs that the bot ignores messages from.
+    IgnoredUsers: [
+        "0000000000000000000",
+        "1111111111111111111",
+        "2222222222222222222"
+    ],
     // Log's channel ID. It could be a text, announcement, voice, thread or post channel ID.
     LogChannel: "0000000000000000000",
     // Log's embed color. It could be a #HexCode or resolvable text like: "Red", "Blue", "Purple", "Green", "Yellow"

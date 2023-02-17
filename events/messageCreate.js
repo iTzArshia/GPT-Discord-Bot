@@ -2,16 +2,20 @@ const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
 const ms = require('ms');
+const fs = require('node:fs');
 const func = require('../utils/functions');
+const tokenizer = require('../utils/encoder/encoder');
+const settings = require('../utils/settings');
 const config = require('../configs/config.json');
 const { moderation } = require('../configs/moderation');
+const { chatbot } = require('../configs/chatbot');
 
 module.exports = async (client, message) => {
 
     if (message.channel.type === Discord.ChannelType.DM || message.author.bot || message.system) return;
 
     // Auto Moderation
-    if (moderation.State && !moderation.IgnoredChannels.includes(message.channelId)) {
+    if (moderation.State && !moderation.IgnoredChannels.includes(message.channelId) && !moderation.IgnoredUsers.includes(message.author.id)) {
 
         const logChannel = client.channels.cache.get(moderation.LogChannel);
 
@@ -245,6 +249,102 @@ module.exports = async (client, message) => {
             });
 
         };
+
+    };
+
+    // ChatBot
+    if (chatbot.State && chatbot.ChatBotChannel === message.channelId && !chatbot.IgnoredUsers.includes(message.author.id)) {
+
+        await message.channel.sendTyping();
+
+        const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
+        const openai = new openAI.OpenAIApi(configuration);
+
+        const question = message.content;
+        openai.createModeration({
+
+            input: question
+
+        }).then(async (response) => {
+
+            const data = response.data.results[0];
+            if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
+            else {
+
+                const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8");
+                const prompt = chatGPTprompt
+                    .replaceAll('{botUsername}', client.user.username)
+                    .replaceAll('{userUsername}', message.author.username)
+                    .replaceAll('{question}', question);
+                const encoded = tokenizer.encode(prompt);
+                const maxTokens = 4096 - encoded.length;
+
+                openai.createCompletion({
+
+                    model: settings.chatGPT.model,
+                    prompt: prompt,
+                    max_tokens: maxTokens,
+                    temperature: settings.chatGPT.temprature,
+                    top_p: settings.chatGPT.top_p,
+                    frequency_penalty: settings.chatGPT.frequency_penalty,
+                    presence_penalty: settings.chatGPT.frequency_penalty
+
+                }).then(async (response) => {
+
+                    const answer = response.data.choices[0].text;
+                    const usage = response.data.usage;
+
+                    openai.createModeration({
+
+                        input: answer
+
+                    }).then(async (response) => {
+
+                        const data = response.data.results[0];
+                        if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
+                        else {
+
+                            if (answer.length < 4096) await message.reply({ content: answer });
+                            else {
+
+                                const attachment = new Discord.AttachmentBuilder(
+                                    Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
+                                    { name: 'response.txt' }
+                                );
+                                await message.reply({ files: [attachment] });
+
+                            };
+
+                        };
+
+                    }).catch(async (error) => {
+
+                        console.error(chalk.bold.redBright(error));
+
+                        if (error.response) await message.reply({ content: error.response.data.error.message });
+                        else if (error.message) await message.reply({ content: error.message });
+
+                    });
+
+                }).catch(async (error) => {
+
+                    console.error(chalk.bold.redBright(error));
+
+                    if (error.response) await message.reply({ content: error.response.data.error.message });
+                    else if (error.message) await message.reply({ content: error.message });
+
+                });
+
+            };
+
+        }).catch(async (error) => {
+
+            console.error(chalk.bold.redBright(error));
+
+            if (error.response) await message.reply({ content: error.response.data.error.message });
+            else if (error.message) await message.reply({ content: error.message });
+
+        });
 
     };
 
