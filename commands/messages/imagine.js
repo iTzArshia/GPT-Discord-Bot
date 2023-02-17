@@ -47,21 +47,42 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: message.author.displayAvatarURL()
                     })
-                    .setDescription(data.map((d, i) => `[\`image ${i + 1}\`](${d.url})`).join(' | '))
                     .setImage(data[0].url)
 
             ];
 
+            const buttons = [
+
+                new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Link)
+                    .setLabel('Image 1')
+                    .setURL(data[0].url)
+
+            ];
+
             for (let i = 0; i < 3; i++) {
+
                 const embed = new Discord.EmbedBuilder()
                     .setURL('https://github.com/iTzArshia/GPT-Discord-Bot')
                     .setImage(data[i + 1].url);
 
+                const button = new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Link)
+                    .setLabel(`Image ${i + 2}`)
+                    .setURL(data[i + 1].url)
+
                 embeds.push(embed);
+                buttons.push(button);
 
             };
 
-            await message.reply({ embeds: embeds });
+            const row = new Discord.ActionRowBuilder()
+                .addComponents(buttons);
+
+            await message.reply({
+                embeds: embeds,
+                components: [row]
+            });
 
         }).catch(async (error) => {
 
