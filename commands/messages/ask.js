@@ -56,7 +56,7 @@ module.exports = {
                     const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8");
                     const prompt = chatGPTprompt
                         .replaceAll('{botUsername}', client.user.username)
-                        .replaceAll('{userUsername}', interaction.user.username)
+                        .replaceAll('{userUsername}', message.author.username)
                         .replaceAll('{question}', question);
                     const encoded = tokenizer.encode(prompt);
                     const maxTokens = 4096 - encoded.length;
