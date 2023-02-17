@@ -3,6 +3,7 @@ const openAI = require('openai');
 const chalk = require('chalk');
 const func = require('../../utils/functions');
 const tokenizer = require('../../utils/encoder/encoder');
+const settings = require('../../utils/settings');
 const config = require('../../configs/config.json');
 
 module.exports = {
@@ -73,13 +74,13 @@ module.exports = {
 
                 openai.createCompletion({
 
-                    model: 'text-davinci-003',
+                    model: settings.translator.model,
                     prompt: prompt,
                     max_tokens: maxTokens,
-                    temperature: 0.77,
-                    top_p: 0.9,
-                    frequency_penalty: 0.95,
-                    presence_penalty: 0.95
+                    temperature: settings.translator.temprature,
+                    top_p: settings.translator.top_p,
+                    frequency_penalty: settings.translator.frequency_penalty,
+                    presence_penalty: settings.translator.frequency_penalty
 
                 }).then(async (response) => {
 
@@ -149,7 +150,7 @@ module.exports = {
         }).catch(async (error) => {
 
             console.error(chalk.bold.redBright(error));
-         
+
             if (error.response) {
 
                 const embed = new Discord.EmbedBuilder()
