@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
+const fs = require('node:fs');
 const func = require('../../utils/functions');
 const tokenizer = require('../../utils/encoder/encoder');
 const settings = require('../../utils/settings');
@@ -53,7 +54,13 @@ module.exports = {
 
                 } else {
 
-                    const prompt = `System: Instructions for ${client.user.username}: Please act as an English translator. spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it to English and then answer in the corrected and improved version of my text in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Retain the meaning, but elevate them into a higher literacy competency. I want you to only reply to the correction, the improvements and nothing else, do not write any additional explanations.\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`
+                    const language = 'English';
+                    const translatorPrompt = fs.readFileSync("./utils/prompts/translator.txt", "utf-8");
+                    const prompt = translatorPrompt
+                        .replaceAll('{botUsername}', client.user.username)
+                        .replaceAll('{userUsername}', message.author.username)
+                        .replaceAll('{language}', language)
+                        .replaceAll('{question}', question);
                     const encoded = tokenizer.encode(prompt);
                     const maxTokens = 4096 - encoded.length;
 
