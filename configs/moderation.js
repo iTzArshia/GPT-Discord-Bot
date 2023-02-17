@@ -3,15 +3,27 @@ module.exports.moderation = {
     // false: Disable the Moderation model.
     State: false,
     // A list of channel IDs that the bot ignores messages from.
-    IgnoredChannels: ["0000000000000000000", "1111111111111111111", "2222222222222222222"],
+    IgnoredChannels: [
+        "0000000000000000000",
+        "1111111111111111111",
+        "2222222222222222222"
+    ],
     // Log's channel ID. It could be a text, announcement, voice, thread or post channel ID.
     LogChannel: "0000000000000000000",
     // Log's embed color. It could be a #HexCode or resolvable text like: "Red", "Blue", "Purple", "Green", "Yellow"
     LogColor: "Red",
     // A list of roles that can use moderation buttons without having permissions.
-    AdminRoles: ["0000000000000000000", "1111111111111111111", "2222222222222222222"],
+    AdminRoles: [
+        "0000000000000000000",
+        "1111111111111111111",
+        "2222222222222222222"
+    ],
     // A list of users that can use moderation buttons without having permissions.
-    AdminUsers: ["0000000000000000000", "1111111111111111111", "2222222222222222222"],
+    AdminUsers: [
+        "0000000000000000000",
+        "1111111111111111111",
+        "2222222222222222222"
+    ],
     // true: Deletes Flagged Messages automatically.
     // false: Doesn't delete flagged messages automatically.
     AutoDelete: {
