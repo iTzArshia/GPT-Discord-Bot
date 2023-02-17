@@ -46,11 +46,7 @@ module.exports = {
                             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                             iconURL: message.author.displayAvatarURL()
                         })
-                        .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`)
-                        .setFooter({
-                            text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
-                            iconURL: client.user.displayAvatarURL()
-                        });
+                        .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
                     await message.reply({ embeds: [logEmbed] });
 
@@ -105,7 +101,7 @@ module.exports = {
 
                         console.error(chalk.bold.redBright(error));
 
-                        if (error.message) {
+                        if (error.response) {
 
                             const embed = new Discord.EmbedBuilder()
                                 .setColor(config.ErrorColor)
@@ -113,14 +109,22 @@ module.exports = {
                                     name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                     iconURL: message.author.displayAvatarURL()
                                 })
-                                .setDescription(error.message)
-                                .setFooter({
-                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
-                                    iconURL: client.user.displayAvatarURL()
-                                });
-
+                                .setDescription(error.response.data.error.message);
+            
                             await message.reply({ embeds: [embed] }).catch(() => null);
-
+            
+                        } else if (error.message) {
+            
+                            const embed = new Discord.EmbedBuilder()
+                                .setColor(config.ErrorColor)
+                                .setAuthor({
+                                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                    iconURL: message.author.displayAvatarURL()
+                                })
+                                .setDescription(error.message);
+            
+                            await message.reply({ embeds: [embed] }).catch(() => null);
+            
                         };
 
                     });
@@ -131,7 +135,7 @@ module.exports = {
 
                 console.error(chalk.bold.redBright(error));
 
-                if (error.message) {
+                if (error.response) {
 
                     const embed = new Discord.EmbedBuilder()
                         .setColor(config.ErrorColor)
@@ -139,10 +143,22 @@ module.exports = {
                             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                             iconURL: message.author.displayAvatarURL()
                         })
-                        .setDescription(error.message);
-
+                        .setDescription(error.response.data.error.message);
+    
                     await message.reply({ embeds: [embed] }).catch(() => null);
-
+    
+                } else if (error.message) {
+    
+                    const embed = new Discord.EmbedBuilder()
+                        .setColor(config.ErrorColor)
+                        .setAuthor({
+                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                            iconURL: message.author.displayAvatarURL()
+                        })
+                        .setDescription(error.message);
+    
+                    await message.reply({ embeds: [embed] }).catch(() => null);
+    
                 };
 
             });
