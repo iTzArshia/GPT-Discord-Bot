@@ -141,4 +141,4 @@ replace [5] with a list of detailed descriptions about the technical basis like 
 
 The outcome depends on the coherency of the prompt. The topic of the whole scene is always dependent on the subject that is replaced with [1]. There is not always a need to add lighting information, decide as neccessary. Do not use more than 40 words under any circumstance. Be concise but descriptive.
 
-Input Prompt:
+Input Prompt: 
