@@ -46,7 +46,11 @@ module.exports = {
                             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                             iconURL: message.author.displayAvatarURL()
                         })
-                        .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
+                        .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`)
+                        .setFooter({
+                            text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
+                            iconURL: client.user.displayAvatarURL()
+                        });
 
                     await message.reply({ embeds: [logEmbed] });
 
@@ -81,7 +85,7 @@ module.exports = {
                                 })
                                 .setDescription(answer)
                                 .setFooter({
-                                    text: `Consumed ${usage.total_tokens} (Q: ${usage.prompt_tokens} | A: ${usage.completion_tokens}) Tokens`,
+                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
@@ -109,7 +113,11 @@ module.exports = {
                                     name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                     iconURL: message.author.displayAvatarURL()
                                 })
-                                .setDescription(error.message);
+                                .setDescription(error.message)
+                                .setFooter({
+                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
+                                    iconURL: client.user.displayAvatarURL()
+                                });
 
                             await message.reply({ embeds: [embed] }).catch(() => null);
 
