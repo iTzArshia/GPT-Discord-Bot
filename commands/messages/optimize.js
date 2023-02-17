@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const fs = require('node:fs');
 const func = require('../../utils/functions');
 const tokenizer = require('../../utils/encoder/encoder');
+const settings = require('../../utils/settings');
 const config = require('../../configs/config.json');
 
 module.exports = {
@@ -59,13 +60,13 @@ module.exports = {
 
                 openai.createCompletion({
 
-                    model: 'text-davinci-003',
+                    model: settings.optimzer.model,
                     prompt: prompt,
                     max_tokens: maxTokens,
-                    temperature: 1,
-                    top_p: 1,
-                    frequency_penalty: 0.0,
-                    presence_penalty: 0.0
+                    temperature: settings.optimzer.temprature,
+                    top_p: settings.optimzer.top_p,
+                    frequency_penalty: settings.optimzer.frequency_penalty,
+                    presence_penalty: settings.optimzer.frequency_penalty
 
                 }).then(async (response) => {
 
