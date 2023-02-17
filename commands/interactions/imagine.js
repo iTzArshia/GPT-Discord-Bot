@@ -57,8 +57,16 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: interaction.user.displayAvatarURL()
                     })
-                    .setDescription(data.map((d, i) => `[\`image ${i + 1}\`](${d.url})`).join(' | '))
                     .setImage(data[0].url)
+
+            ];
+
+            const buttons = [
+
+                new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Link)
+                    .setLabel('Image 1')
+                    .setURL(data[0].url)
 
             ];
 
@@ -68,11 +76,23 @@ module.exports = {
                     .setURL('https://github.com/iTzArshia/GPT-Discord-Bot')
                     .setImage(data[i + 1].url);
 
+                const button = new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Link)
+                    .setLabel(`Image ${i + 2}`)
+                    .setURL(data[i + 1].url)
+
                 embeds.push(embed);
+                buttons.push(button);
 
             };
 
-            await interaction.editReply({ embeds: embeds });
+            const row = new Discord.ActionRowBuilder()
+                .addComponents(buttons);
+
+            await interaction.editReply({
+                embeds: embeds,
+                components: [row]
+            });
 
         }).catch(async (error) => {
 
