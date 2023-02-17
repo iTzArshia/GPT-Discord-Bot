@@ -60,11 +60,7 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: interaction.user.displayAvatarURL()
                     })
-                    .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`)
-                    .setFooter({
-                        text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
-                        iconURL: client.user.displayAvatarURL()
-                    });
+                    .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
                 await interaction.editReply({ embeds: [logEmbed] });
 
@@ -128,11 +124,19 @@ module.exports = {
                                 name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                 iconURL: interaction.user.displayAvatarURL()
                             })
-                            .setDescription(error.message)
-                            .setFooter({
-                                text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
-                                iconURL: client.user.displayAvatarURL()
-                            });
+                            .setDescription(error.response.data.error.message);
+
+                        await interaction.editReply({ embeds: [embed] }).catch(() => null);
+
+                    } else if (error.message) {
+
+                        const embed = new Discord.EmbedBuilder()
+                            .setColor(config.ErrorColor)
+                            .setAuthor({
+                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                iconURL: interaction.user.displayAvatarURL()
+                            })
+                            .setDescription(error.message);
 
                         await interaction.editReply({ embeds: [embed] }).catch(() => null);
 
@@ -145,16 +149,32 @@ module.exports = {
         }).catch(async (error) => {
 
             console.error(chalk.bold.redBright(error));
+         
+            if (error.response) {
 
-            const embed = new Discord.EmbedBuilder()
-                .setColor(config.ErrorColor)
-                .setAuthor({
-                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                    iconURL: interaction.user.displayAvatarURL()
-                })
-                .setDescription(error.message);
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(error.response.data.error.message);
 
-            await interaction.editReply({ embeds: [embed] }).catch(() => null);
+                await interaction.editReply({ embeds: [embed] }).catch(() => null);
+
+            } else if (error.message) {
+
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(error.message);
+
+                await interaction.editReply({ embeds: [embed] }).catch(() => null);
+
+            };
 
         });
 
