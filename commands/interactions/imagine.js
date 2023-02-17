@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
+const func = require('../../utils/functions');
 const config = require('../../configs/config.json');
 
 module.exports = {
@@ -58,6 +59,10 @@ module.exports = {
                         iconURL: interaction.user.displayAvatarURL()
                     })
                     .setImage(data[0].url)
+                    .setFooter({
+                        text: `Costs ${func.pricing('dall.e', 4, '1024x1024')}`,
+                        iconURL: client.user.displayAvatarURL()
+                    })
 
             ];
 
