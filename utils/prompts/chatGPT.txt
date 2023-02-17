@@ -3,4 +3,4 @@ Please respond in a conversational and natural manner, if you were having a conv
 
 Messages:
 - {userUsername}: {question}
-- {botUsername}:ي
+- {botUsername}:
