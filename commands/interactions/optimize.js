@@ -62,8 +62,8 @@ module.exports = {
 
             } else {
 
-                const imageOptimizerText = fs.readFileSync("./utils/prompts/optimizer.txt", "utf-8");
-                const prompt = imageOptimizerText + question;
+                const optimizerPrompt = fs.readFileSync("./utils/prompts/optimizer.txt", "utf-8");
+                const prompt = optimizerPrompt + question;
                 const encoded = tokenizer.encode(prompt);
                 const maxTokens = 4096 - encoded.length;
 
@@ -155,9 +155,9 @@ module.exports = {
                                 });
 
                             await interaction.editReply({ embeds: [embed] }).catch(() => null);
-            
+
                         } else if (error.message) {
-            
+
                             const embed = new Discord.EmbedBuilder()
                                 .setColor(config.ErrorColor)
                                 .setAuthor({
@@ -169,9 +169,9 @@ module.exports = {
                                     text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
                                     iconURL: client.user.displayAvatarURL()
                                 });
-            
+
                             await interaction.editReply({ embeds: [embed] }).catch(() => null);
-            
+
                         };
 
                     });
