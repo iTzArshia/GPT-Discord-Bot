@@ -15,7 +15,7 @@ module.exports = {
     timestamp: function (ms) {
         return `<t:${Math.trunc(ms / 1000)}:D> | <t:${Math.trunc(ms / 1000)}:R>`;
     },
-        
+
     flagCheck: function (object) {
 
         let Sexual = false;
@@ -42,6 +42,25 @@ module.exports = {
             allFlags: allFlags,
             trueFlags: trueFlags
         };
+
+    },
+
+    pricing: function (model, number, resolution) {
+
+        let cost = 0.0;
+        if (model === 'dall.e') {
+            let pricing = {
+                '1024x1024': 0.020,
+                '512x512': 0.018,
+                '256x256': 0.016
+            };
+            cost = number * pricing[resolution];
+        }
+        else if (model === 'davinci') cost = number * (0.0200 / 1000);
+        else if (model === 'curie') cost = number * (0.0020 / 1000);
+        else if (model === 'babbage') cost = number * (0.0005 / 1000);
+        else if (model === 'ada') cost = number * (0.0004 / 1000);
+        return `$${Number(cost.toFixed(4))}`;
 
     },
 
