@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const openAI = require('openai');
 const chalk = require('chalk');
 const func = require('../../utils/functions');
-const tokenizer = require('../../utils/encoder')
+const tokenizer = require('../../utils/encoder/encoder');
 const config = require('../../configs/config.json');
 
 module.exports = {
