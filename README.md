@@ -38,7 +38,7 @@ After installation finishes run `node register.js` to deploy slash commands and 
 ## 💫 Features
 `/Ask` / `!Ask` : Answers your questions with `Text-Davinci-003`! 
 
-`/Imagine` / `!Imagine` : Draw your imaginations with `Dall.E`!
+`/Imagine` / `!Imagine` : Draw your imaginations with `Dall∙E`!
 
 `/Optimize` / `!Optimize` : Optimizes your imaginations to get better response with imagine command with `Text-Davinci-003`!
 
