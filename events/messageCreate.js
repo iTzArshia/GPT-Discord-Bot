@@ -339,7 +339,7 @@ module.exports = async (client, message) => {
                                 conversations.set(message.author.id, [question, answer]);
                             };
 
-                            if (answer.length < 4096) await message.reply({ content: answer });
+                            if (answer.length <= 2000) await message.reply({ content: answer });
                             else {
 
                                 const attachment = new Discord.AttachmentBuilder(
