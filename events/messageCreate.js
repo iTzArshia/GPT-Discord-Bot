@@ -9,6 +9,7 @@ const settings = require('../utils/settings');
 const config = require('../configs/config.json');
 const { moderation } = require('../configs/moderation');
 const { chatbot } = require('../configs/chatbot');
+const conversations = new Map();
 
 module.exports = async (client, message) => {
 
@@ -271,11 +272,25 @@ module.exports = async (client, message) => {
             if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
             else {
 
-                const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8");
-                const prompt = chatGPTprompt
-                    .replaceAll('{botUsername}', client.user.username)
-                    .replaceAll('{userUsername}', message.author.username)
-                    .replaceAll('{question}', question);
+                function conversationGet(userId) {
+                    if (conversations.has(userId)) {
+                        return conversations.get(userId);
+                    };
+                };
+
+                const oldConversation = conversationGet(message.author.id);
+
+                let prompt;
+                if (oldConversation) {
+                    prompt = `${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+                } else {
+                    const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8");
+                    prompt = chatGPTprompt
+                        .replaceAll('{botUsername}', client.user.username)
+                        .replaceAll('{userUsername}', message.author.username)
+                        .replaceAll('{question}', question);
+                };
+
                 const encoded = tokenizer.encode(prompt);
                 const maxTokens = 4096 - encoded.length;
 
@@ -303,6 +318,18 @@ module.exports = async (client, message) => {
                         const data = response.data.results[0];
                         if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
                         else {
+
+                            function conversationUpdate(userId, question, answer) {
+                                if (conversations.has(userId)) {
+                                    const oldConversation = conversations.get(userId);
+                                    const newConversation = `${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`;
+                                    conversations.set(userId, newConversation);
+                                } else {
+                                    conversations.set(userId, `${prompt}${answer}`);
+                                };
+                            };
+
+                            conversationUpdate(message.author.id, question, answer)
 
                             if (answer.length < 4096) await message.reply({ content: answer });
                             else {
