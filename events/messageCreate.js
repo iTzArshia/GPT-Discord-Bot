@@ -343,7 +343,7 @@ module.exports = async (client, message) => {
                             else {
 
                                 const attachment = new Discord.AttachmentBuilder(
-                                    Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
+                                    Buffer.from(`Question: ${question}\n\n${answer}`, 'utf-8'),
                                     { name: 'response.txt' }
                                 );
                                 await message.reply({ files: [attachment] });
