@@ -280,16 +280,31 @@ module.exports = async (client, message) => {
                     .replaceAll('{question}', question);
 
                 if (conversations.has(message.author.id)) oldConversation = conversations.get(message.author.id);
-                if (oldConversation) prompt = `${chatGPTprompt}\n\nMessages:${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+
+                function mapping(array) {
+                    return array.map((string, index) => {
+                        if (index % 2 === 0) return `- ${message.author.username}:${string}`;
+                        else return `- ${client.user.username}:${string}`;
+                    }).join('\n');
+                };
+
+                if (oldConversation) prompt = `${chatGPTprompt}\n\nMessages:\n${mapping(oldConversation)}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
                 else prompt = `${chatGPTprompt}\n\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
 
-                console.log(prompt);
+                let encoded = tokenizer.encode(prompt);
+                let maxTokens = 4096 - encoded.length;
 
-                const encoded = tokenizer.encode(prompt);
-                const maxTokens = 4096 - encoded.length;
+                while (maxTokens <= 0) {
 
-                if (encoded >= 2048) {
-                    console.log('Need to remove messages')
+                    const oldConversationData = conversations.get(message.author.id);
+                    let sliceLength = oldConversationData.length * -0.5
+                    if (sliceLength % 2 !== 0) sliceLength--
+                    const slicedConversationDataArray = oldConversationData.slice(sliceLength)
+                    conversations.set(message.author.id, slicedConversationDataArray);
+                    prompt = `${chatGPTprompt}\n\nMessages:\n${mapping(slicedConversationDataArray)}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+                    encoded = tokenizer.encode(prompt);
+                    maxTokens = 4096 - encoded.length;
+
                 };
 
                 openai.createCompletion({
@@ -305,7 +320,6 @@ module.exports = async (client, message) => {
                 }).then(async (response) => {
 
                     const answer = response.data.choices[0].text;
-                    const usage = response.data.usage;
 
                     openai.createModeration({
 
@@ -319,10 +333,10 @@ module.exports = async (client, message) => {
 
                             if (conversations.has(message.author.id)) {
                                 const oldConversation = conversations.get(message.author.id);
-                                const newConversation = `${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`;
-                                conversations.set(message.author.id, newConversation);
+                                const newDataArray = oldConversation.concat([question, answer]);
+                                conversations.set(message.author.id, newDataArray);
                             } else {
-                                conversations.set(message.author.id, `\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`);
+                                conversations.set(message.author.id, [question, answer]);
                             };
 
                             if (answer.length < 4096) await message.reply({ content: answer });
