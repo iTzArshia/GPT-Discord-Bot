@@ -47,6 +47,7 @@ After installation finishes run `node register.js` to deploy slash commands and 
 ![Ask](https://user-images.githubusercontent.com/89854127/218874201-c64068e8-708e-49ca-a322-bcb1e4a76646.png)
 ![imagine](https://user-images.githubusercontent.com/89854127/218997350-d9a98021-33ad-4fed-b0bc-47306eebdd10.png)
 ![Translate](https://user-images.githubusercontent.com/89854127/218874217-f472fa38-9918-46a3-a0e2-6a4cbfb4c370.png)
+![Conversation](https://user-images.githubusercontent.com/89854127/219849430-09bdbac5-2ffa-4759-9748-e33ec30c75f1.png)
 ![Auto Mod](https://user-images.githubusercontent.com/89854127/218874203-c54283b2-410a-4ab6-a233-1dbbb5f42594.png)
 ## ❤️ Donations
 You can **[support](https://reymit.ir/itz_arshia)** me by donating if you like the project!
