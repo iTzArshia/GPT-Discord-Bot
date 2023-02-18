@@ -28,7 +28,7 @@ Go to `config.json` in `configs` folder and fill out the values:
 ```
 ⚠️ **Note: Never commit or share your token publicly** ⚠️
 
-and if you want to use moderation model fill and config `moderation.js` in `configs` folder (Information on how to configure it is available in the file itself)
+and if you want to use chatbot or moderation model fill and config `chatbot.js` and `moderation.js` in `configs` folder and (Information on how to configure them is available in the files themselves)
 ## 🧠 installation
 Open your terminal and install required packages with
 ```sh
@@ -36,13 +36,17 @@ npm install
 ```
 After installation finishes run `node register.js` to deploy slash commands and then run `node index.js` in terminal to start the bot.
 ## 💫 Features
-`/Ask` / `!Ask` : Answers your questions!
+`/Ask` / `!Ask` : Answers your questions with `Text-Davinci-003`! 
 
-`/Imagine` / `!Imagine` : Draw your imaginations!
+`/Imagine` / `!Imagine` : Draw your imaginations with `Dall.E`!
 
-`/Translate` / `!Translate` : Translate your texts in any language to any language you want
+`/Optimize` / `!Optimize` : Optimizes your imaginations to get better response with imagine command with `Text-Davinci-003`!
 
-`Auto Moderation`
+`/Translate` / `!Translate` : Translate your texts in any language to any language you want with `Text-Davinci-003`.
+
+`ChatBot` : A Channel where you can talk to the bot and have ChatGPT-Style conversation with `Text-Davinci-003`. (It has a temporary memory so that it can remember the contents for a short time)
+
+`Auto Moderation` : An Auto Mod system which checks all of  your server messages and send a log for your Admins if a message content complies with OpenAI's usage policies with `Text-Moderation-004` (moderation model is free to use and you can config it as much as you want)
 ## 📸 Screenshots
 ![Ask](https://user-images.githubusercontent.com/89854127/218874201-c64068e8-708e-49ca-a322-bcb1e4a76646.png)
 ![imagine](https://user-images.githubusercontent.com/89854127/218997350-d9a98021-33ad-4fed-b0bc-47306eebdd10.png)
