@@ -53,7 +53,7 @@ module.exports = {
 
                 } else {
 
-                    const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8");
+                    const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPTask.txt", "utf-8");
                     const prompt = chatGPTprompt
                         .replaceAll('{botUsername}', client.user.username)
                         .replaceAll('{userUsername}', message.author.username)
