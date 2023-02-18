@@ -322,7 +322,7 @@ module.exports = async (client, message) => {
                                 const newConversation = `${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`;
                                 conversations.set(message.author.id, newConversation);
                             } else {
-                                conversations.set(message.author.id, `Messages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`);
+                                conversations.set(message.author.id, `\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`);
                             };
 
                             if (answer.length < 4096) await message.reply({ content: answer });
