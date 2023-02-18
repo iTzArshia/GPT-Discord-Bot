@@ -272,27 +272,25 @@ module.exports = async (client, message) => {
             if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
             else {
 
-                function conversationGet(userId) {
-                    if (conversations.has(userId)) {
-                        return conversations.get(userId);
-                    };
-                };
+                let oldConversation, prompt;
 
-                const oldConversation = conversationGet(message.author.id);
+                const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8")
+                    .replaceAll('{botUsername}', client.user.username)
+                    .replaceAll('{userUsername}', message.author.username)
+                    .replaceAll('{question}', question);
 
-                let prompt;
-                if (oldConversation) {
-                    prompt = `${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
-                } else {
-                    const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8");
-                    prompt = chatGPTprompt
-                        .replaceAll('{botUsername}', client.user.username)
-                        .replaceAll('{userUsername}', message.author.username)
-                        .replaceAll('{question}', question);
-                };
+                if (conversations.has(message.author.id)) oldConversation = conversations.get(message.author.id);
+                if (oldConversation) prompt = `${chatGPTprompt}\n\nMessages:${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+                else prompt = `${chatGPTprompt}\n\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
+
+                console.log(prompt);
 
                 const encoded = tokenizer.encode(prompt);
                 const maxTokens = 4096 - encoded.length;
+
+                if (encoded >= 2048) {
+                    console.log('Need to remove messages')
+                };
 
                 openai.createCompletion({
 
@@ -319,17 +317,13 @@ module.exports = async (client, message) => {
                         if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
                         else {
 
-                            function conversationUpdate(userId, question, answer) {
-                                if (conversations.has(userId)) {
-                                    const oldConversation = conversations.get(userId);
-                                    const newConversation = `${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`;
-                                    conversations.set(userId, newConversation);
-                                } else {
-                                    conversations.set(userId, `${prompt}${answer}`);
-                                };
+                            if (conversations.has(message.author.id)) {
+                                const oldConversation = conversations.get(message.author.id);
+                                const newConversation = `${oldConversation}\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`;
+                                conversations.set(message.author.id, newConversation);
+                            } else {
+                                conversations.set(message.author.id, `Messages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:${answer}`);
                             };
-
-                            conversationUpdate(message.author.id, question, answer)
 
                             if (answer.length < 4096) await message.reply({ content: answer });
                             else {
