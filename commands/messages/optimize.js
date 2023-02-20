@@ -54,7 +54,7 @@ module.exports = {
             } else {
 
                 const optimizerPrompt = fs.readFileSync("./utils/prompts/optimizer.txt", "utf-8");
-                const prompt = optimizerPrompt + question;
+                const prompt = optimizerPrompt + question + ".";
                 const encoded = tokenizer.encode(prompt);
                 const maxTokens = 4096 - encoded.length;
 
