@@ -133,6 +133,7 @@ module.exports = {
                                     Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
                                     { name: 'response.txt' }
                                 );
+                                
                                 await interaction.editReply({ files: [attachment] });
 
                             };
