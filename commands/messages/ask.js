@@ -123,6 +123,7 @@ module.exports = {
                                         Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
                                         { name: 'response.txt' }
                                     );
+                                    
                                     await message.reply({ files: [attachment] });
 
                                 };
