@@ -80,7 +80,14 @@ module.exports = {
 
                 }).then(async (response) => {
 
-                    const answer = response.data.choices[0].text;
+                    const answer = response.data.choices[0].text
+                        .replace("Optimized Prompt:", "")
+                        .replace("Optimized prompt:", "")
+                        .replace("Optimized Output:", "")
+                        .replace("Optimized output:", "")
+                        .replace("Output:", "")
+                        .replace("output:", "");
+
                     const usage = response.data.usage;
 
                     openai.createModeration({
