@@ -14,8 +14,8 @@ module.exports.translator = {
 };
 module.exports.optimzer = {
     model: "text-davinci-003",
-    temprature: 1,
+    temprature: 0.9,
     top_p: 1,
     frequency_penalty: 0.0,
-    presence_penalty: 0.0
+    presence_penalty: 0.5
 };
