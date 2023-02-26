@@ -79,7 +79,7 @@ module.exports = {
                     temperature: settings.chatGPT.temprature,
                     top_p: settings.chatGPT.top_p,
                     frequency_penalty: settings.chatGPT.frequency_penalty,
-                    presence_penalty: settings.chatGPT.frequency_penalty
+                    presence_penalty: settings.chatGPT.presence_penalty
 
                 }).then(async (response) => {
 
