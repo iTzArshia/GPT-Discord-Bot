@@ -72,7 +72,7 @@ module.exports = {
                         temperature: settings.translator.temprature,
                         top_p: settings.translator.top_p,
                         frequency_penalty: settings.translator.frequency_penalty,
-                        presence_penalty: settings.translator.frequency_penalty
+                        presence_penalty: settings.translator.presence_penalty
 
                     }).then(async (response) => {
 
