@@ -66,7 +66,7 @@ module.exports = {
                     temperature: settings.optimzer.temprature,
                     top_p: settings.optimzer.top_p,
                     frequency_penalty: settings.optimzer.frequency_penalty,
-                    presence_penalty: settings.optimzer.frequency_penalty
+                    presence_penalty: settings.optimzer.presence_penalty
 
                 }).then(async (response) => {
 
