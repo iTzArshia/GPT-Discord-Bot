@@ -3,7 +3,6 @@ const openAI = require('openai');
 const chalk = require('chalk');
 const fs = require('node:fs');
 const func = require('../../utils/functions');
-const tokenizer = require('../../utils/encoder/encoder');
 const settings = require('../../utils/settings');
 const config = require('../../configs/config.json');
 
@@ -65,14 +64,12 @@ module.exports = {
 
                 const optimizerPrompt = fs.readFileSync("./utils/prompts/optimizer.txt", "utf-8");
                 const prompt = optimizerPrompt + question + ".";
-                const encoded = tokenizer.encode(prompt);
-                const maxTokens = 4096 - encoded.length;
 
                 openai.createCompletion({
 
-                    model: settings.optimzer.model,
+                    model: 'text-davinci-003',
                     prompt: prompt,
-                    max_tokens: maxTokens,
+                    max_tokens: func.tokenizer('davinci', prompt).maxTokens,
                     temperature: settings.optimzer.temprature,
                     top_p: settings.optimzer.top_p,
                     frequency_penalty: settings.optimzer.frequency_penalty,
