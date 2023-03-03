@@ -3,7 +3,6 @@ const openAI = require('openai');
 const chalk = require('chalk');
 const fs = require('node:fs');
 const func = require('../../utils/functions');
-const tokenizer = require('../../utils/encoder/encoder');
 const settings = require('../../utils/settings');
 const config = require('../../configs/config.json');
 
@@ -61,14 +60,12 @@ module.exports = {
                         .replaceAll('{userUsername}', message.author.username)
                         .replaceAll('{language}', language)
                         .replaceAll('{question}', question);
-                    const encoded = tokenizer.encode(prompt);
-                    const maxTokens = 4096 - encoded.length;
 
                     openai.createCompletion({
 
-                        model: settings.translator.model,
+                        model: 'text-davinci-003',
                         prompt: prompt,
-                        max_tokens: maxTokens,
+                        max_tokens: func.tokenizer('davinci', prompt).maxTokens,
                         temperature: settings.translator.temprature,
                         top_p: settings.translator.top_p,
                         frequency_penalty: settings.translator.frequency_penalty,
