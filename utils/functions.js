@@ -51,16 +51,32 @@ module.exports = {
 
         if (model === 'chatgpt') {
 
-            let encodedLength = 0;
-            for (const message of prompt) {
-                const encoded = encoder.encode(message.content);
-                encodedLength = encodedLength + encoded.length + 4;
-            };
-            const tokens = encodedLength + 2;
-            const maxTokens = 4096 - tokens;
+            // let tokens = 0;
+            // for (const message of prompt) {
+            //     tokens += 4;
+            //     tokens += encoder.encode(message.content).length;
+            //     if (message.name) tokens -= 1;
+            // };
+            // tokens += 2;
+            // const maxTokens = 4096 - tokens;
+            // return {
+            //     tokens: tokens,
+            //     maxTokens: maxTokens
+            // };
+
+            const messageTokenCounts = prompt.map((message) => {
+                const propertyTokenCounts = Object.entries(message).map(([key, value]) => {
+                    const numTokens = encoder.encode(value).length;
+                    const adjustment = (key === 'name') ? 1 : 0;
+                    return numTokens - adjustment;
+                });
+                return propertyTokenCounts.reduce((a, b) => a + b, 4);
+            });
+
+            const messageTokens = messageTokenCounts.reduce((a, b) => a + b, 2);
             return {
-                tokens: tokens,
-                maxTokens: maxTokens
+                tokens: messageTokens,
+                maxTokens: 4096 - messageTokens
             };
 
         } else {
