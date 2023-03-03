@@ -274,7 +274,7 @@ module.exports = async (client, message) => {
 
                 let oldConversation, prompt;
 
-                const chatGPTprompt = fs.readFileSync("./utils/prompts/chatGPT.txt", "utf-8")
+                const chatGPTprompt = fs.readFileSync("./utils/prompts/chatbot.txt", "utf-8")
                     .replaceAll('{botUsername}', client.user.username)
                     .replaceAll('{userUsername}', message.author.username)
                     .replaceAll('{question}', question);
@@ -309,13 +309,13 @@ module.exports = async (client, message) => {
 
                 openai.createCompletion({
 
-                    model: settings.chatGPT.model,
+                    model: settings.completion.model,
                     prompt: prompt,
                     max_tokens: maxTokens,
-                    temperature: settings.chatGPT.temprature,
-                    top_p: settings.chatGPT.top_p,
-                    frequency_penalty: settings.chatGPT.frequency_penalty,
-                    presence_penalty: settings.chatGPT.presence_penalty
+                    temperature: settings.completion.temprature,
+                    top_p: settings.completion.top_p,
+                    frequency_penalty: settings.completion.frequency_penalty,
+                    presence_penalty: settings.completion.presence_penalty
 
                 }).then(async (response) => {
 
