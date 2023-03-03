@@ -1,3 +1,5 @@
+const encoder = require('./encoder/encoder');
+
 module.exports = {
 
     numberWithCommas: function (number) { // 1000 to 1,000
@@ -45,6 +47,38 @@ module.exports = {
 
     },
 
+    tokenizer: function (model, prompt) {
+
+        if (model === 'chatgpt') {
+
+            let encodedLength = 0;
+            for (const message of prompt) {
+                const encoded = encoder.encode(message.content);
+                encodedLength = encodedLength + encoded.length + 4;
+            };
+            const tokens = encodedLength + 2;
+            const maxTokens = 4096 - tokens;
+            return {
+                tokens: tokens,
+                maxTokens: maxTokens
+            };
+
+        } else {
+
+            const encoded = encoder.encode(prompt);
+            const tokens = encoded.length;
+            let maxTokens;
+            if (model === 'davinci') maxTokens = 4096 - tokens;
+            else maxTokens = 2048 - tokens;
+            return {
+                tokens: tokens,
+                maxTokens: maxTokens
+            };
+
+        };
+
+    },
+
     pricing: function (model, number, resolution) {
 
         let cost = 0.0;
@@ -56,6 +90,7 @@ module.exports = {
             };
             cost = number * pricing[resolution];
         }
+        else if (model === 'chatgpt') cost = number * (0.0020 / 1000);
         else if (model === 'davinci') cost = number * (0.0200 / 1000);
         else if (model === 'curie') cost = number * (0.0020 / 1000);
         else if (model === 'babbage') cost = number * (0.0005 / 1000);
