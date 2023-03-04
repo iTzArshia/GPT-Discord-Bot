@@ -72,8 +72,7 @@ module.exports = {
 
                         const answer = response.data.choices[0].text;
                         const usage = response.data.usage;
-                        console.log(prompt)
-                        console.log(answer)
+
                         openai.createModeration({
 
                             input: answer
@@ -140,7 +139,11 @@ module.exports = {
                                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                         iconURL: message.author.displayAvatarURL()
                                     })
-                                    .setDescription(error.response.data.error.message);
+                                    .setDescription(error.response.data.error.message)
+                                    .setFooter({
+                                        text: `Costs ${func.pricing('ada', usage.total_tokens)}`,
+                                        iconURL: client.user.displayAvatarURL()
+                                    });
 
                                 await message.reply({ embeds: [embed] }).catch(() => null);
 
@@ -152,7 +155,11 @@ module.exports = {
                                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                         iconURL: message.author.displayAvatarURL()
                                     })
-                                    .setDescription(error.message);
+                                    .setDescription(error.message)
+                                    .setFooter({
+                                        text: `Costs ${func.pricing('ada', usage.total_tokens)}`,
+                                        iconURL: client.user.displayAvatarURL()
+                                    });
 
                                 await message.reply({ embeds: [embed] }).catch(() => null);
 
