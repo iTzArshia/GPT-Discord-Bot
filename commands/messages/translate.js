@@ -54,18 +54,25 @@ module.exports = {
                 } else {
 
                     const language = 'English';
-                    const translatorPrompt = fs.readFileSync("./utils/prompts/translator.txt", "utf-8");
-                    const prompt = translatorPrompt
-                        .replaceAll('{botUsername}', client.user.username)
-                        .replaceAll('{userUsername}', message.author.username)
-                        .replaceAll('{language}', language)
-                        .replaceAll('{question}', question);
+                    const translatorPrompt = fs.readFileSync("./utils/prompts/translator.txt", "utf-8")
+                    const prompt = translatorPrompt.replaceAll('{language}', language);
 
-                    openai.createCompletion({
+                    const messages = [
+                        {
+                            "role": "system",
+                            "content": prompt
+                        },
+                        {
+                            "role": 'user',
+                            "content": question
+                        }
+                    ];
 
-                        model: 'text-davinci-003',
-                        prompt: prompt,
-                        max_tokens: func.tokenizer('davinci', prompt).maxTokens,
+                    openai.createChatCompletion({
+
+                        model: 'gpt-3.5-turbo',
+                        messages: messages,
+                        max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
                         temperature: settings.translator.temprature,
                         top_p: settings.translator.top_p,
                         frequency_penalty: settings.translator.frequency_penalty,
@@ -73,7 +80,7 @@ module.exports = {
 
                     }).then(async (response) => {
 
-                        const answer = response.data.choices[0].text;
+                        const answer = response.data.choices[0].message.content;
                         const usage = response.data.usage;
 
                         if (answer.length < 4096) {
@@ -86,7 +93,7 @@ module.exports = {
                                 })
                                 .setDescription(answer)
                                 .setFooter({
-                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
+                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
