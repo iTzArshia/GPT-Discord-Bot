@@ -137,7 +137,6 @@ module.exports = async (client, message) => {
                             name: message.author.tag,
                             iconURL: message.author.displayAvatarURL()
                         })
-                        // .setDescription(message.content)
                         .setDescription(`||${message.content}||`)
                         .setFields(
                             {
@@ -268,7 +267,7 @@ module.exports = async (client, message) => {
         }).then(async (response) => {
 
             const data = response.data.results[0];
-            if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
+            if (data.flagged) await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
             else {
 
                 const chatGPTprompt = fs.readFileSync("./utils/prompts/chatCompletion.txt", "utf-8");
@@ -326,7 +325,7 @@ module.exports = async (client, message) => {
                     }).then(async (response) => {
 
                         const data = response.data.results[0];
-                        if (data.flagged) return await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
+                        if (data.flagged) await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
                         else {
 
                             const newDataArray = [
