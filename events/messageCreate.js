@@ -309,7 +309,7 @@ module.exports = async (client, message) => {
 
                 openai.createCompletion({
 
-                    model: settings.completion.model,
+                    model: 'text-davinci-003',
                     prompt: prompt,
                     max_tokens: maxTokens,
                     temperature: settings.completion.temprature,
