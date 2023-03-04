@@ -22,7 +22,7 @@ module.exports = {
                 .setTitle('Error')
                 .setDescription(`You can't use the \`${cmd}\` command like this you have to provide something like the example\n\`\`\`\n${config.Prefix}${cmd} A Dragon under water\n\`\`\``);
 
-            return await message.reply({ embeds: [embed] });
+            await message.reply({ embeds: [embed] });
 
         };
 
@@ -48,7 +48,7 @@ module.exports = {
                     })
                     .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
-                return message.reply({ embeds: [embed] });
+                await message.reply({ embeds: [embed] });
 
             } else {
 
@@ -103,7 +103,7 @@ module.exports = {
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
-                            return message.reply({ embeds: [embed] });
+                            await message.reply({ embeds: [embed] });
 
                         } else {
 
