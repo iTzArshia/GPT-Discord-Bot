@@ -37,7 +37,7 @@ npm install
 After installation finishes run `node register.js` to deploy slash commands and then run `node index.js` in terminal to start the bot.
 ## 💫 Features
 ### Commands
-`Ask` : Answers your questions with all GPT models **GPT-3.5-Turbo**, **Text-Davinci-003**, **Text-Curie-001**, **Text-Babbage-001**, **Text-Ada-001**! 
+`Ask` : Answers your questions with all GPT models (**GPT-3.5-Turbo**, **Text-Davinci-003**, **Text-Curie-001**, **Text-Babbage-001**, and **Text-Ada-001**)! 
 
 `Imagine` : Draw your imaginations with **Dall∙E**!
 
