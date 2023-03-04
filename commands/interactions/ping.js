@@ -56,7 +56,7 @@ module.exports = {
                 iconURL: interaction.user.displayAvatarURL({ size: 1024 })
             });
 
-        return await interaction.editReply({ embeds: [embed] });
+        await interaction.editReply({ embeds: [embed] });
 
     },
 
