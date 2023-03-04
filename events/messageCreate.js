@@ -4,7 +4,6 @@ const chalk = require('chalk');
 const ms = require('ms');
 const fs = require('node:fs');
 const func = require('../utils/functions');
-const tokenizer = require('../utils/encoder/encoder');
 const settings = require('../utils/settings');
 const config = require('../configs/config.json');
 const { moderation } = require('../configs/moderation');
@@ -290,11 +289,8 @@ module.exports = async (client, message) => {
 
                 if (oldConversation) prompt = `${chatGPTprompt}\n\nMessages:\n${mapping(oldConversation)}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
                 else prompt = `${chatGPTprompt}\n\nMessages:\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
-
-                let encoded = tokenizer.encode(prompt);
-                let maxTokens = 4096 - encoded.length;
-
-                while (maxTokens <= 0) {
+              
+                while (func.tokenizer('davinci', prompt).maxTokens <= 0) {
 
                     const oldConversationData = conversations.get(message.author.id);
                     let sliceLength = oldConversationData.length * -0.5
@@ -302,8 +298,6 @@ module.exports = async (client, message) => {
                     const slicedConversationDataArray = oldConversationData.slice(sliceLength)
                     conversations.set(message.author.id, slicedConversationDataArray);
                     prompt = `${chatGPTprompt}\n\nMessages:\n${mapping(slicedConversationDataArray)}\n- ${message.author.username}: ${question}\n- ${client.user.username}:`;
-                    encoded = tokenizer.encode(prompt);
-                    maxTokens = 4096 - encoded.length;
 
                 };
 
@@ -311,7 +305,7 @@ module.exports = async (client, message) => {
 
                     model: 'text-davinci-003',
                     prompt: prompt,
-                    max_tokens: maxTokens,
+                    max_tokens: func.tokenizer('davinci', prompt).maxTokens,
                     temperature: settings.completion.temprature,
                     top_p: settings.completion.top_p,
                     frequency_penalty: settings.completion.frequency_penalty,
