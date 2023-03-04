@@ -20,7 +20,7 @@ module.exports = {
                 .setTitle('Error')
                 .setDescription(`You can't use the \`${cmd}\` command like this you have to provide something like the example\n\`\`\`\n${config.Prefix}${cmd} A Dragon under water\n\`\`\``);
 
-            return await message.reply({ embeds: [embed] });
+            await message.reply({ embeds: [embed] });
 
         };
 
