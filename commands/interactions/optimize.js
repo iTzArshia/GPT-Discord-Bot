@@ -50,7 +50,7 @@ module.exports = {
             const data = response.data.results[0];
             if (data.flagged) {
 
-                const logEmbed = new Discord.EmbedBuilder()
+                const embed = new Discord.EmbedBuilder()
                     .setColor(config.ErrorColor)
                     .setAuthor({
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
@@ -58,7 +58,7 @@ module.exports = {
                     })
                     .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
 
-                await interaction.editReply({ embeds: [logEmbed] });
+                await interaction.editReply({ embeds: [embed] });
 
             } else {
 
@@ -113,7 +113,7 @@ module.exports = {
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
-                            return interaction.editReply({ embeds: [embed] });
+                            await interaction.editReply({ embeds: [embed] });
 
                         } else {
 
