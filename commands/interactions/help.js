@@ -27,7 +27,7 @@ module.exports = {
     const ephemeral = ephemeralChoice === 'Enable' ? true : false;
     await interaction.deferReply({ ephemeral: ephemeral });
 
-    const helpEmbed = new Discord.EmbedBuilder()
+    const embed = new Discord.EmbedBuilder()
       .setColor(config.MainColor)
       .setAuthor({
         name: `${client.user.username} Commands`,
@@ -36,13 +36,13 @@ module.exports = {
       .setDescription(client.MessageCommands.map(c => `> \`${config.Prefix}${c.name}\` \`(${c.aliases?.map(a => `${config.Prefix}${a}`)?.join(' / ') || 'No Aliases'})\`\n> *${c.description}*`).join('\n\n'))
       .setFooter({ text: 'Developed by iTz Arshia#7650 https://github.com/iTzArshia/GPT-Discord-Bot' });
 
-    if (chatbot.State) helpEmbed.addFields({
+    if (chatbot.State) embed.addFields({
       name: 'ChatBot:',
       value: `Channel: <#${chatbot.ChatBotChannel}>`,
       inline: true
     });
 
-    return await interaction.editReply({ embeds: [helpEmbed] });
+    await interaction.editReply({ embeds: [embed] });
 
   },
 
