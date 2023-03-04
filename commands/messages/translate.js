@@ -121,11 +121,7 @@ module.exports = {
                                     name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                     iconURL: message.author.displayAvatarURL()
                                 })
-                                .setDescription(error.response.data.error.message)
-                                .setFooter({
-                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
-                                    iconURL: client.user.displayAvatarURL()
-                                });
+                                .setDescription(error.response.data.error.message);
 
                             await message.reply({ embeds: [embed] }).catch(() => null);
 
@@ -137,11 +133,7 @@ module.exports = {
                                     name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                     iconURL: message.author.displayAvatarURL()
                                 })
-                                .setDescription(error.message)
-                                .setFooter({
-                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
-                                    iconURL: client.user.displayAvatarURL()
-                                });
+                                .setDescription(error.message);
 
                             await message.reply({ embeds: [embed] }).catch(() => null);
 
