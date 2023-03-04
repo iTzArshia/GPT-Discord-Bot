@@ -55,11 +55,16 @@ module.exports = {
                 const optimizerPrompt = fs.readFileSync("./utils/prompts/optimizer.txt", "utf-8");
                 const prompt = optimizerPrompt + question + ".";
 
-                openai.createCompletion({
+                const messages = [{
+                    "role": 'user',
+                    "content": prompt
+                }];
 
-                    model: 'text-davinci-003',
-                    prompt: prompt,
-                    max_tokens: func.tokenizer('davinci', prompt).maxTokens,
+                openai.createChatCompletion({
+
+                    model: 'gpt-3.5-turbo',
+                    messages: messages,
+                    max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
                     temperature: settings.optimzer.temprature,
                     top_p: settings.optimzer.top_p,
                     frequency_penalty: settings.optimzer.frequency_penalty,
@@ -67,7 +72,7 @@ module.exports = {
 
                 }).then(async (response) => {
 
-                    const answer = response.data.choices[0].text
+                    const answer = response.data.choices[0].message.content
                         .replace("Optimized Prompt:", "")
                         .replace("Optimized prompt:", "")
                         .replace("Optimized Output:", "")
@@ -94,7 +99,7 @@ module.exports = {
                                 })
                                 .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`)
                                 .setFooter({
-                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
+                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
@@ -110,7 +115,7 @@ module.exports = {
                                 })
                                 .setDescription(answer)
                                 .setFooter({
-                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
+                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
@@ -132,7 +137,7 @@ module.exports = {
                                 })
                                 .setDescription(error.response.data.error.message)
                                 .setFooter({
-                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
+                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
@@ -148,7 +153,7 @@ module.exports = {
                                 })
                                 .setDescription(error.message)
                                 .setFooter({
-                                    text: `Costs ${func.pricing('davinci', usage.total_tokens)}`,
+                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
                                     iconURL: client.user.displayAvatarURL()
                                 });
 
