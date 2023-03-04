@@ -7,7 +7,7 @@ const encoderAda = encoding_for_model('text-ada-001');
 
 module.exports = {
 
-    numberWithCommas: function (number) { // 1000 to 1,000
+    numberWithCommas: function (number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
 
