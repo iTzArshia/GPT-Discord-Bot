@@ -9,7 +9,7 @@ module.exports = {
     description: "Shows the bot\'s latency.",
 
     async execute(client, message, args, cmd) {
-     
+
         await message.channel.sendTyping();
 
         const embed = new Discord.EmbedBuilder()
@@ -40,7 +40,7 @@ module.exports = {
                 iconURL: message.author.displayAvatarURL({ size: 1024 })
             });
 
-        return await message.reply({ embeds: [embed] });
+        await message.reply({ embeds: [embed] });
 
     },
 
