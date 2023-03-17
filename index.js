@@ -1,9 +1,9 @@
 /*
     Author: iTz Arshia
     Github: https://github.com/iTzArshia/GPT-Discord-Bot
-    Current Version: 1.0.0
-    DiscordJs Version: 14.7.1
-    OpenAI Version: 3.1.0
+    Current Version: 2.0.2
+    DiscordJs Version: 14.8.0
+    OpenAI Version: 3.2.1
 */
 
 const Discord = require('discord.js');
