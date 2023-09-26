@@ -17,28 +17,16 @@ module.exports = {
         )
         .addStringOption(option => option
             .setName("model")
-            .setDescription("What model do you want to ask from? (Default: ChatGPT)")
+            .setDescription("What model do you want to ask from? (Default: GPT 3.5)")
             .setChoices(
                 {
-                    name: 'ChatGPT (BEST OF THE BEST)',
-                    value: 'chatgpt'
+                    name: 'GPT-3.5 (Cheaper)',
+                    value: 'gpt-3.5'
                 },
                 {
-                    name: 'Davinci (Most powerful)',
-                    value: 'davinci'
-                },
-                {
-                    name: 'Curie',
-                    value: 'curie'
-                },
-                {
-                    name: 'Babbage',
-                    value: 'babbage'
-                },
-                {
-                    name: 'Ada (Fastest)',
-                    value: 'ada'
-                },
+                    name: 'GPT-4 (Smarter)',
+                    value: 'gpt-4'
+                }
             )
             .setRequired(false)
         )
@@ -63,133 +51,77 @@ module.exports = {
         const ephemeral = ephemeralChoice === 'Enable' ? true : false;
         await interaction.deferReply({ ephemeral: ephemeral });
 
-        const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
-        const openai = new openAI.OpenAIApi(configuration);
+        const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
 
         const question = interaction.options.getString("prompt");
 
-        const model = interaction.options.getString('model') || 'chatgpt';
+        const model = interaction.options.getString('model') || 'gpt-3.5';
         const modelNames = {
-            'chatgpt': 'gpt-3.5-turbo',
-            'davinci': 'text-davinci-003',
-            'curie': 'text-curie-001',
-            'babbage': 'text-babbage-001',
-            'ada': 'text-ada-001'
+            'gpt-3.5': 'gpt-3.5-turbo',
+            'gpt-4': 'gpt-4'
         };
 
-        const chatGPTprompt = fs.readFileSync(`./utils/prompts/${model === 'chatgpt' ? 'chatCompletion' : 'completion'}.txt`, "utf-8");
-        const prompt = chatGPTprompt
+        const completionPrompt = fs.readFileSync(`./utils/prompts/${model === 'chatgpt' || model === 'davinci' ? 'chatCompletion' : 'completion'}.txt`, "utf-8");
+        const prompt = completionPrompt
             .replaceAll('{botUsername}', client.user.username)
             .replaceAll('{userUsername}', interaction.user.username)
             .replaceAll('{question}', question);
 
-        let completion, answer;
+        const messages = [
+            {
+                "role": "system",
+                "content": prompt
+            },
+            {
+                "role": 'user',
+                "content": question
+            }
+        ];
 
-        if (model === 'chatgpt') {
+        const completion = await openai.chat.completions.create({
 
-            const messages = [
-                {
-                    "role": "system",
-                    "content": prompt
-                },
-                {
-                    "role": 'user',
-                    "content": question
-                }
-            ];
+            model: modelNames[model],
+            messages: messages,
+            // max_tokens: func.tokenizer(model, messages).maxTokens,
+            temperature: settings.completion.temprature,
+            top_p: settings.completion.top_p,
+            frequency_penalty: settings.completion.frequency_penalty,
+            presence_penalty: settings.completion.presence_penalty
 
-            completion = await openai.createChatCompletion({
+        }).catch(async (error) => {
 
-                model: modelNames[model],
-                messages: messages,
-                max_tokens: func.tokenizer(model, messages).maxTokens,
-                temperature: settings.completion.temprature,
-                top_p: settings.completion.top_p,
-                frequency_penalty: settings.completion.frequency_penalty,
-                presence_penalty: settings.completion.presence_penalty
+            console.error(chalk.bold.redBright(error));
 
-            }).catch(async (error) => {
+            if (error.response) {
 
-                console.error(chalk.bold.redBright(error));
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(error.response.error.message);
 
-                if (error.response) {
+                await interaction.editReply({ embeds: [embed] }).catch(() => null);
 
-                    const embed = new Discord.EmbedBuilder()
-                        .setColor(config.ErrorColor)
-                        .setAuthor({
-                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                            iconURL: interaction.user.displayAvatarURL()
-                        })
-                        .setDescription(error.response.data.error.message);
+            } else if (error.message) {
 
-                    await interaction.editReply({ embeds: [embed] }).catch(() => null);
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.ErrorColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(error.message);
 
-                } else if (error.message) {
+                await interaction.editReply({ embeds: [embed] }).catch(() => null);
 
-                    const embed = new Discord.EmbedBuilder()
-                        .setColor(config.ErrorColor)
-                        .setAuthor({
-                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                            iconURL: interaction.user.displayAvatarURL()
-                        })
-                        .setDescription(error.message);
+            };
 
-                    await interaction.editReply({ embeds: [embed] }).catch(() => null);
+        });
 
-                };
-
-            });
-
-        } else {
-
-            completion = await openai.createCompletion({
-
-                model: modelNames[model],
-                prompt: prompt,
-                max_tokens: func.tokenizer(model, prompt).maxTokens,
-                temperature: settings.completion.temprature,
-                top_p: settings.completion.top_p,
-                frequency_penalty: settings.completion.frequency_penalty,
-                presence_penalty: settings.completion.presence_penalty
-
-            }).catch(async (error) => {
-
-                console.error(chalk.bold.redBright(error));
-
-                if (error.response) {
-
-                    const embed = new Discord.EmbedBuilder()
-                        .setColor(config.ErrorColor)
-                        .setAuthor({
-                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                            iconURL: interaction.user.displayAvatarURL()
-                        })
-                        .setDescription(error.response.data.error.message);
-
-                    await interaction.editReply({ embeds: [embed] }).catch(() => null);
-
-                } else if (error.message) {
-
-                    const embed = new Discord.EmbedBuilder()
-                        .setColor(config.ErrorColor)
-                        .setAuthor({
-                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                            iconURL: interaction.user.displayAvatarURL()
-                        })
-                        .setDescription(error.message);
-
-                    await interaction.editReply({ embeds: [embed] }).catch(() => null);
-
-                };
-
-            });
-
-        };
-
-        if (model === 'chatgpt') answer = completion.data.choices[0].message.content;
-        else answer = completion.data.choices[0].text;
-
-        const usage = completion.data.usage;
+        const answer = completion.choices[0].message.content;
+        const usage = completion.usage;
 
         if (answer.length < 4096) {
 
