@@ -35,24 +35,27 @@ module.exports.moderation = {
     AutoDelete: {
         "Sexual": false,
         "Hate": false,
-        "Violence": false,
-        "Self-Harm": false
+        "Harassment": false,
+        "Self-Harm": false,
+        "Violence": false
     },
     // true: Punishes flagged messages' authors automatically.
     // false: Doesn't punish flagged messages' authors automatically.
     AutoPunish: {
         "Sexual": false,
         "Hate": false,
-        "Violence": false,
-        "Self-Harm": false
+        "Harassment": false,
+        "Self-Harm": false,
+        "Violence": false
     },
     // Valid punishment types for flagged messages' authors if "AutoPunish" is enabled: "Timeout", "Kick", "Ban"
     // Note: If more than 1 flag is enabled, the priority will be as follows: 1. Ban 2. Kick. 3. Timeout.
     AutoPunishType: {
         "Sexual": "Timeout",
         "Hate": "Timeout",
-        "Violence": "Timeout",
-        "Self-Harm": "Timeout"
+        "Harassment": "Timeout",
+        "Self-Harm": "Timeout",
+        "Violence": "Timeout"
     },
     // For timeouts it will be the timeout's duration.
     // For bans, it will be the number of days from which it will purge the message history.
@@ -69,7 +72,8 @@ module.exports.moderation = {
     AutoPunishDuration: {
         "Sexual": "1d",
         "Hate": "1d",
-        "Violence": "1d",
-        "Self-Harm": "1d"
+        "Harassment": "1d",
+        "Self-Harm": "1d",
+        "Violence": "1d"
     },
 };
