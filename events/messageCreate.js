@@ -260,122 +260,81 @@ module.exports = async (client, message) => {
         const openai = new openAI.OpenAIApi(configuration);
 
         const question = message.content;
-        openai.createModeration({
 
-            input: question
+        const chatGPTprompt = fs.readFileSync("./utils/prompts/chatCompletion.txt", "utf-8");
+        const prompt = chatGPTprompt.replaceAll('{botUsername}', client.user.username);
+
+        let messages = [{
+            "role": "system",
+            "content": prompt
+        }];
+
+        console.log(func.tokenizer('chatgpt', messages).tokens);
+
+        let oldMessages;
+        if (conversations.has(message.author.id)) oldMessages = conversations.get(message.author.id);
+        if (oldMessages) {
+
+            while (func.tokenizer('chatgpt', oldMessages).tokens >= 512) {
+
+                let sliceLength = oldMessages.length * -0.5
+                if (sliceLength % 2 !== 0) sliceLength--
+                oldMessages = oldMessages.slice(sliceLength)
+                conversations.set(message.author.id, oldMessages);
+
+            };
+
+            messages = messages.concat(oldMessages);
+
+        };
+
+        messages.push({
+            "role": "user",
+            "content": question
+        });
+
+        console.log(func.tokenizer('chatgpt', messages).tokens);
+
+        openai.createChatCompletion({
+
+            model: 'gpt-3.5-turbo',
+            messages: messages,
+            max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
+            temperature: settings.completion.temprature,
+            top_p: settings.completion.top_p,
+            frequency_penalty: settings.completion.frequency_penalty,
+            presence_penalty: settings.completion.presence_penalty
 
         }).then(async (response) => {
 
-            const data = response.data.results[0];
-            if (data.flagged) await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
-            else {
+            const answer = response.data.choices[0].message.content;
 
-                const chatGPTprompt = fs.readFileSync("./utils/prompts/chatCompletion.txt", "utf-8");
-                const prompt = chatGPTprompt.replaceAll('{botUsername}', client.user.username);
-
-                let messages = [{
-                    "role": "system",
-                    "content": prompt
-                }];
-
-                console.log(func.tokenizer('chatgpt', messages).tokens);
-
-                let oldMessages;
-                if (conversations.has(message.author.id)) oldMessages = conversations.get(message.author.id);
-                if (oldMessages) {
-
-                    while (func.tokenizer('chatgpt', oldMessages).tokens >= 512) {
-
-                        let sliceLength = oldMessages.length * -0.5
-                        if (sliceLength % 2 !== 0) sliceLength--
-                        oldMessages = oldMessages.slice(sliceLength)
-                        conversations.set(message.author.id, oldMessages);
-
-                    };
-
-                    messages = messages.concat(oldMessages);
-
-                };
-
-                messages.push({
+            const newDataArray = [
+                {
                     "role": "user",
                     "content": question
-                });
+                },
+                {
+                    "role": "assistant",
+                    "content": answer
+                }
+            ];
 
-                console.log(func.tokenizer('chatgpt', messages).tokens);
+            if (conversations.has(message.author.id)) {
+                const oldConversation = conversations.get(message.author.id);
+                conversations.set(message.author.id, oldConversation.concat(newDataArray));
+            } else {
+                conversations.set(message.author.id, newDataArray);
+            };
 
-                openai.createChatCompletion({
+            if (answer.length <= 2000) await message.reply({ content: answer });
+            else {
 
-                    model: 'gpt-3.5-turbo',
-                    messages: messages,
-                    max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
-                    temperature: settings.completion.temprature,
-                    top_p: settings.completion.top_p,
-                    frequency_penalty: settings.completion.frequency_penalty,
-                    presence_penalty: settings.completion.presence_penalty
-
-                }).then(async (response) => {
-
-                    const answer = response.data.choices[0].message.content;
-
-                    openai.createModeration({
-
-                        input: answer
-
-                    }).then(async (response) => {
-
-                        const data = response.data.results[0];
-                        if (data.flagged) await message.reply({ content: `Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}` });
-                        else {
-
-                            const newDataArray = [
-                                {
-                                    "role": "user",
-                                    "content": question
-                                },
-                                {
-                                    "role": "assistant",
-                                    "content": answer
-                                }
-                            ];
-
-                            if (conversations.has(message.author.id)) {
-                                const oldConversation = conversations.get(message.author.id);
-                                conversations.set(message.author.id, oldConversation.concat(newDataArray));
-                            } else {
-                                conversations.set(message.author.id, newDataArray);
-                            };
-
-                            if (answer.length <= 2000) await message.reply({ content: answer });
-                            else {
-
-                                const attachment = new Discord.AttachmentBuilder(
-                                    Buffer.from(`Question: ${question}\n\n${answer}`, 'utf-8'),
-                                    { name: 'response.txt' }
-                                );
-                                await message.reply({ files: [attachment] });
-
-                            };
-
-                        };
-
-                    }).catch(async (error) => {
-
-                        console.error(chalk.bold.redBright(error));
-
-                        if (error.response) await message.reply({ content: error.response.data.error.message });
-                        else if (error.message) await message.reply({ content: error.message });
-
-                    });
-
-                }).catch(async (error) => {
-
-                    console.error(chalk.bold.redBright(error));
-
-                    if (error.response) await message.reply({ content: error.response.data.error.message });
-                    else if (error.message) await message.reply({ content: error.message });
-
-                });
+                const attachment = new Discord.AttachmentBuilder(
+                    Buffer.from(`Question: ${question}\n\n${answer}`, 'utf-8'),
+                    { name: 'response.txt' }
+                );
+                await message.reply({ files: [attachment] });
 
             };
 
