@@ -24,7 +24,8 @@ module.exports = async (client, message) => {
             const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
             
             openai.moderations.create({
-
+                
+                model: 'text-moderation-stable',
                 input: message.content
 
             }).then(async (response) => {
