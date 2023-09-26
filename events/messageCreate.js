@@ -21,9 +21,9 @@ module.exports = async (client, message) => {
 
         if (logChannel?.permissionsFor(message.guild.members.me).has("ViewChannel", "SendMessages", "EmbedLinks")) {
 
-            openai.createModeration({
             const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
             
+            openai.moderations.create({
 
                 input: message.content
 
