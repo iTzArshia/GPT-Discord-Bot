@@ -29,7 +29,7 @@ module.exports = async (client, message) => {
 
             }).then(async (response) => {
 
-                const data = response.data.results[0];
+                const data = response.results[0];
                 if (data.flagged) {
 
                     const flags = func.flagCheck(data.categories);
