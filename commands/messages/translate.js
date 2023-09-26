@@ -32,114 +32,59 @@ module.exports = {
 
             const question = args.join(" ");
 
-            openai.createModeration({
+            const language = 'English';
+            const translatorPrompt = fs.readFileSync("./utils/prompts/translator.txt", "utf-8")
+            const prompt = translatorPrompt.replaceAll('{language}', language);
 
-                input: question
+            const messages = [
+                {
+                    "role": "system",
+                    "content": prompt
+                },
+                {
+                    "role": 'user',
+                    "content": question
+                }
+            ];
+
+            openai.createChatCompletion({
+
+                model: 'gpt-3.5-turbo',
+                messages: messages,
+                max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
+                temperature: settings.translator.temprature,
+                top_p: settings.translator.top_p,
+                frequency_penalty: settings.translator.frequency_penalty,
+                presence_penalty: settings.translator.presence_penalty
 
             }).then(async (response) => {
 
-                const data = response.data.results[0];
-                if (data.flagged) {
+                const answer = response.data.choices[0].message.content;
+                const usage = response.data.usage;
+
+                if (answer.length <= 4096) {
 
                     const embed = new Discord.EmbedBuilder()
-                        .setColor(config.ErrorColor)
+                        .setColor(config.MainColor)
                         .setAuthor({
                             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                             iconURL: message.author.displayAvatarURL()
                         })
-                        .setDescription(`Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowd by our safety system\n\n**Flags:** ${func.flagCheck(data.categories).trueFlags}`);
+                        .setDescription(answer)
+                        .setFooter({
+                            text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
+                            iconURL: client.user.displayAvatarURL()
+                        });
 
                     await message.reply({ embeds: [embed] });
 
                 } else {
 
-                    const language = 'English';
-                    const translatorPrompt = fs.readFileSync("./utils/prompts/translator.txt", "utf-8")
-                    const prompt = translatorPrompt.replaceAll('{language}', language);
-
-                    const messages = [
-                        {
-                            "role": "system",
-                            "content": prompt
-                        },
-                        {
-                            "role": 'user',
-                            "content": question
-                        }
-                    ];
-
-                    openai.createChatCompletion({
-
-                        model: 'gpt-3.5-turbo',
-                        messages: messages,
-                        max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
-                        temperature: settings.translator.temprature,
-                        top_p: settings.translator.top_p,
-                        frequency_penalty: settings.translator.frequency_penalty,
-                        presence_penalty: settings.translator.presence_penalty
-
-                    }).then(async (response) => {
-
-                        const answer = response.data.choices[0].message.content;
-                        const usage = response.data.usage;
-
-                        if (answer.length <= 4096) {
-
-                            const embed = new Discord.EmbedBuilder()
-                                .setColor(config.MainColor)
-                                .setAuthor({
-                                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                                    iconURL: message.author.displayAvatarURL()
-                                })
-                                .setDescription(answer)
-                                .setFooter({
-                                    text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
-                                    iconURL: client.user.displayAvatarURL()
-                                });
-
-                            await message.reply({ embeds: [embed] });
-
-                        } else {
-
-                            const attachment = new Discord.AttachmentBuilder(
-                                Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
-                                { name: 'response.txt' }
-                            );
-                            await message.reply({ files: [attachment] });
-
-                        };
-
-                    }).catch(async (error) => {
-
-                        console.error(chalk.bold.redBright(error));
-
-                        if (error.response) {
-
-                            const embed = new Discord.EmbedBuilder()
-                                .setColor(config.ErrorColor)
-                                .setAuthor({
-                                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                                    iconURL: message.author.displayAvatarURL()
-                                })
-                                .setDescription(error.response.data.error.message);
-
-                            await message.reply({ embeds: [embed] }).catch(() => null);
-
-                        } else if (error.message) {
-
-                            const embed = new Discord.EmbedBuilder()
-                                .setColor(config.ErrorColor)
-                                .setAuthor({
-                                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                                    iconURL: message.author.displayAvatarURL()
-                                })
-                                .setDescription(error.message);
-
-                            await message.reply({ embeds: [embed] }).catch(() => null);
-
-                        };
-
-                    });
+                    const attachment = new Discord.AttachmentBuilder(
+                        Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
+                        { name: 'response.txt' }
+                    );
+                    await message.reply({ files: [attachment] });
 
                 };
 
