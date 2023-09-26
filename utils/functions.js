@@ -1,9 +1,5 @@
-const { encoding_for_model, get_encoding } = require('@dqbd/tiktoken');
-const encoderGPT3_5 = get_encoding('cl100k_base');
-const encoderDavinci = encoding_for_model('text-davinci-003');
-const encoderCurie = encoding_for_model('text-curie-001');
-const encoderBabbage = encoding_for_model('text-babbage-001');
-const encoderAda = encoding_for_model('text-ada-001');
+const tiktoken = require('@dqbd/tiktoken');
+const encoder = tiktoken.get_encoding('cl100k_base');
 
 module.exports = {
 
@@ -54,45 +50,27 @@ module.exports = {
 
     tokenizer: function (model, prompt) {
 
-        if (model === 'chatgpt') {
+        const messageTokenCounts = prompt.map((message) => {
 
-            const messageTokenCounts = prompt.map((message) => {
-
-                const propertyTokenCounts = Object.entries(message).map(([key, value]) => {
-                    const numTokens = encoderGPT3_5.encode(value).length;
-                    const adjustment = (key === 'name') ? 1 : 0;
-                    return numTokens - adjustment;
-                });
-
-                return propertyTokenCounts.reduce((a, b) => a + b, 4);
-
+            const propertyTokenCounts = Object.entries(message).map(([key, value]) => {
+                const numTokens = encoder.encode(value).length;
+                const adjustment = (key === 'name') ? 1 : 0;
+                return numTokens - adjustment;
             });
 
-            const messageTokens = messageTokenCounts.reduce((a, b) => a + b, 2);
+            return propertyTokenCounts.reduce((a, b) => a + b, 4);
 
-            return {
-                tokens: messageTokens,
-                maxTokens: 4095 - messageTokens
-            };
+        });
 
-        } else {
+        const messageTokens = messageTokenCounts.reduce((a, b) => a + b, 2);
 
-            let tokens, maxTokens;
-            if (model === 'davinci') {
-                tokens = encoderDavinci.encode(prompt).length;
-                maxTokens = 4096 - tokens;
-            } else {
-                if (model === 'Curie') tokens = encoderCurie.encode(prompt).length;
-                else if (model === 'Babbage') tokens = encoderBabbage.encode(prompt).length;
-                else if (model === 'Ada') tokens = encoderAda.encode(prompt).length;
-                maxTokens = 2048 - tokens;
-            };
+        let maxTokens;
+        if (model === 'gpt-3.5') maxTokens = 4097
+        else if (model === 'gpt-4') maxTokens = 8192
 
-            return {
-                tokens: tokens,
-                maxTokens: maxTokens
-            };
-
+        return {
+            tokens: messageTokens,
+            maxTokens: maxTokens - messageTokens
         };
 
     },
@@ -108,11 +86,9 @@ module.exports = {
             };
             cost = number * pricing[resolution];
         }
-        else if (model === 'chatgpt') cost = number * (0.0020 / 1000);
-        else if (model === 'davinci') cost = number * (0.0200 / 1000);
-        else if (model === 'curie') cost = number * (0.0020 / 1000);
-        else if (model === 'babbage') cost = number * (0.0005 / 1000);
-        else if (model === 'ada') cost = number * (0.0004 / 1000);
+        else if (model === 'gpt-3.5') cost = number * (0.002 / 1000);
+        else if (model === 'gpt-4') cost = number * (0.060 / 1000);
+
         return `$${Number(cost.toFixed(4))}`;
 
     },
