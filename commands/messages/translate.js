@@ -27,8 +27,7 @@ module.exports = {
 
         } else {
 
-            const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
-            const openai = new openAI.OpenAIApi(configuration);
+            const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
 
             const question = args.join(" ");
 
@@ -47,11 +46,11 @@ module.exports = {
                 }
             ];
 
-            openai.createChatCompletion({
+            openai.chat.completions.create({
 
                 model: 'gpt-3.5-turbo',
                 messages: messages,
-                max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
+                max_tokens: func.tokenizer('gpt-3.5', messages).maxTokens,
                 temperature: settings.translator.temprature,
                 top_p: settings.translator.top_p,
                 frequency_penalty: settings.translator.frequency_penalty,
@@ -59,8 +58,8 @@ module.exports = {
 
             }).then(async (response) => {
 
-                const answer = response.data.choices[0].message.content;
-                const usage = response.data.usage;
+                const answer = response.choices[0].message.content;
+                const usage = response.usage;
 
                 if (answer.length <= 4096) {
 
@@ -72,7 +71,7 @@ module.exports = {
                         })
                         .setDescription(answer)
                         .setFooter({
-                            text: `Costs ${func.pricing('chatgpt', usage.total_tokens)}`,
+                            text: `Costs ${func.pricing('gpt-3.5', usage.total_tokens)}`,
                             iconURL: client.user.displayAvatarURL()
                         });
 
@@ -100,7 +99,7 @@ module.exports = {
                             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                             iconURL: message.author.displayAvatarURL()
                         })
-                        .setDescription(error.response.data.error.message);
+                        .setDescription(error.response.error.message);
 
                     await message.reply({ embeds: [embed] }).catch(() => null);
 
