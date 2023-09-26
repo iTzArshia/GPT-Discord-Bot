@@ -255,26 +255,23 @@ module.exports = async (client, message) => {
 
         await message.channel.sendTyping();
 
-        const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
-        const openai = new openAI.OpenAIApi(configuration);
+        const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
 
         const question = message.content;
 
-        const chatGPTprompt = fs.readFileSync("./utils/prompts/chatCompletion.txt", "utf-8");
-        const prompt = chatGPTprompt.replaceAll('{botUsername}', client.user.username);
+        const completionPrompt = fs.readFileSync("./utils/prompts/completion.txt", "utf-8");
+        const prompt = completionPrompt.replaceAll('{botUsername}', client.user.username);
 
         let messages = [{
             "role": "system",
             "content": prompt
         }];
 
-        console.log(func.tokenizer('chatgpt', messages).tokens);
-
         let oldMessages;
         if (conversations.has(message.author.id)) oldMessages = conversations.get(message.author.id);
         if (oldMessages) {
 
-            while (func.tokenizer('chatgpt', oldMessages).tokens >= 512) {
+            while (func.tokenizer('gpt-3.5', oldMessages).tokens >= 512) {
 
                 let sliceLength = oldMessages.length * -0.5
                 if (sliceLength % 2 !== 0) sliceLength--
@@ -292,13 +289,11 @@ module.exports = async (client, message) => {
             "content": question
         });
 
-        console.log(func.tokenizer('chatgpt', messages).tokens);
-
-        openai.createChatCompletion({
+        openai.chat.completions.create({
 
             model: 'gpt-3.5-turbo',
             messages: messages,
-            max_tokens: func.tokenizer('chatgpt', messages).maxTokens,
+            max_tokens: func.tokenizer('gpt-3.5', messages).maxTokens,
             temperature: settings.completion.temprature,
             top_p: settings.completion.top_p,
             frequency_penalty: settings.completion.frequency_penalty,
@@ -306,7 +301,7 @@ module.exports = async (client, message) => {
 
         }).then(async (response) => {
 
-            const answer = response.data.choices[0].message.content;
+            const answer = response.choices[0].message.content;
 
             const newDataArray = [
                 {
@@ -341,7 +336,7 @@ module.exports = async (client, message) => {
 
             console.error(chalk.bold.redBright(error));
 
-            if (error.response) await message.reply({ content: error.response.data.error.message });
+            if (error.response) await message.reply({ content: error.response.error.message });
             else if (error.message) await message.reply({ content: error.message });
 
         });
