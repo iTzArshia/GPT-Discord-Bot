@@ -10,8 +10,8 @@
     "start": "node index.js"
   },
   "name": "gpt-discord-bot",
-  "description": "Chat GPT Discord Bot",
-  "version": "2.0.2",
+  "description": "GPT Discord Bot",
+  "version": "3.0.0",
   "main": "index.js",
   "repository": "https://github.com/iTzArshia/GPT-Discord-Bot",
   "author": "iTz Arshia",
