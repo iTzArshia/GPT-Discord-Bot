@@ -23,20 +23,24 @@ module.exports = {
 
         let Sexual = false;
         let Hate = false;
-        let Violence = false;
+        let Harassment = false;
         let SelfHarm = false;
+        let Violence = false;
 
         if (object['sexual'] || object['sexual/minors']) Sexual = true;
         if (object['hate'] || object['hate/threatening']) Hate = true;
+        if (object['harassment'] || object['harassment/threatening']) Harassment = true;
+        if (object['self-harm'] || object['self-harm/intent']  || object['self-harm/instructions']) SelfHarm = true;
         if (object['violence'] || object['violence/graphic']) Violence = true;
-        if (object['self-harm']) SelfHarm = true;
 
         const flags = {
             "Sexual": Sexual,
             "Hate": Hate,
-            "Violence": Violence,
+            "Harassment": Harassment,
             "Self-Harm": SelfHarm,
+            "Violence": Violence
         };
+        
         const allFlags = Object.keys(flags).map(key => flags[key] ? `${key}: ✅` : `${key}: ❌`).join("\n");
         const trueFlags = Object.keys(flags).filter(key => flags[key]).join(", ");
 
