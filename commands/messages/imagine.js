@@ -24,12 +24,11 @@ module.exports = {
 
         };
 
-        const configuration = new openAI.Configuration({ apiKey: config.OpenAIapiKey });
-        const openai = new openAI.OpenAIApi(configuration);
+        const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
 
         const question = args.join(" ");
 
-        openai.createImage({
+        openai.images.generate({
 
             prompt: question,
             n: 4,
@@ -37,7 +36,7 @@ module.exports = {
 
         }).then(async (response) => {
 
-            const data = response.data.data;
+            const data = response.data;
 
             const embeds = [
 
@@ -101,7 +100,7 @@ module.exports = {
                         name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                         iconURL: message.author.displayAvatarURL()
                     })
-                    .setDescription(error.response.data.error.message);
+                    .setDescription(error.response.error.message);
 
                 await message.reply({ embeds: [embed] }).catch(() => null);
 
