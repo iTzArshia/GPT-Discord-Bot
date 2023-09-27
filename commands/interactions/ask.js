@@ -181,7 +181,7 @@ module.exports = {
 
             for await (const part of completion) {
 
-                if (iterator === 30) {
+                if (iterator === 50) {
 
                     const fullmessages = [
                         {
@@ -217,7 +217,7 @@ module.exports = {
                     iterator = 0;
                     string = "";
 
-                    await func.delay(2000);
+                    await func.delay(5000);
 
                 };
 
@@ -262,8 +262,7 @@ module.exports = {
 
             };
 
-        }
-
+        };
 
     },
 
