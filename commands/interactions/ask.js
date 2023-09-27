@@ -32,7 +32,7 @@ module.exports = {
         )
         .addStringOption(option => option
             .setName('stream')
-            .setDescription('Streams the bot\'s response. (Default: Enable)')
+            .setDescription('Streams the bot\'s response. (Default: Disable)')
             .addChoices(
                 {
                     name: 'Enable',
