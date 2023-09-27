@@ -181,7 +181,7 @@ module.exports = {
 
             for await (const part of completion) {
 
-                if (iterator === 50) {
+                if (part.choices[0]?.delta?.finish_reason === 'stop') {
 
                     const fullmessages = [
                         {
@@ -214,53 +214,73 @@ module.exports = {
 
                     await interaction.editReply({ embeds: [embed] });
 
-                    iterator = 0;
-                    string = "";
+                } else {
 
-                    await func.delay(5000);
+                    if (string.includes('\n\n')) {
+
+                        const embed = new Discord.EmbedBuilder()
+                            .setColor(config.MainColor)
+                            .setAuthor({
+                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                iconURL: interaction.user.displayAvatarURL()
+                            })
+                            .setDescription(mainString)
+                            .setFooter({
+                                text: `Writing...`,
+                                iconURL: client.user.displayAvatarURL()
+                            });
+
+                        await interaction.editReply({ embeds: [embed] });
+
+                        iterator = 0;
+                        string = "";
+
+                        await func.delay(5000);
+
+                    };
+
+                    iterator += 1;
+                    string += part.choices[0]?.delta?.content || '';
+                    mainString += part.choices[0]?.delta?.content || '';
 
                 };
 
-                iterator += 1;
-                string += part.choices[0]?.delta?.content || '';
-                mainString += part.choices[0]?.delta?.content || '';
-
             };
 
-            if (iterator > 0) {
+            // if (iterator > 0) {
 
-                const fullmessages = [
-                    {
-                        "role": "system",
-                        "content": prompt
-                    },
-                    {
-                        "role": 'user',
-                        "content": question
-                    },
-                    {
-                        "role": 'assistant',
-                        "content": mainString
-                    },
-                ];
+            //     const fullmessages = [
+            //         {
+            //             "role": "system",
+            //             "content": prompt
+            //         },
+            //         {
+            //             "role": 'user',
+            //             "content": question
+            //         },
+            //         {
+            //             "role": 'assistant',
+            //             "content": mainString
+            //         },
+            //     ];
 
-                const totalTokens = func.tokenizer(model, fullmessages).tokens;
+            //     const totalTokens = func.tokenizer(model, fullmessages).tokens;
 
-                const embed = new Discord.EmbedBuilder()
-                    .setColor(config.MainColor)
-                    .setAuthor({
-                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                        iconURL: interaction.user.displayAvatarURL()
-                    })
-                    .setDescription(mainString)
-                    .setFooter({
-                        text: `Costs ${func.pricing(model, totalTokens)}`,
-                        iconURL: client.user.displayAvatarURL()
-                    });
+            //     const embed = new Discord.EmbedBuilder()
+            //         .setColor(config.MainColor)
+            //         .setAuthor({
+            //             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+            //             iconURL: interaction.user.displayAvatarURL()
+            //         })
+            //         .setDescription(mainString)
+            //         .setFooter({
+            //             text: `Costs ${func.pricing(model, totalTokens)}`,
+            //             iconURL: client.user.displayAvatarURL()
+            //         });
 
-                await interaction.editReply({ embeds: [embed] });
+            //     await interaction.editReply({ embeds: [embed] });
 
-            };
+            // };
 
         };
 
