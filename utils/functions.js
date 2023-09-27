@@ -83,7 +83,7 @@ module.exports = {
 
         });
 
-        const messagesTokens = messagesTokenCounts.reduce((a, b) => a + b, tokensPerMessage) + 2;
+        const messagesTokens = messagesTokenCounts.reduce((a, b) => a + b, 0) + 2;
 
         let maxTokens;
         if (model === 'gpt-3.5') maxTokens = 4097
