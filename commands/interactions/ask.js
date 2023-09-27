@@ -146,7 +146,7 @@ module.exports = {
             const answer = completion.choices[0].message.content;
             const usage = completion.usage;
 
-            if (answer.length < 4096) {
+            if (answer.length <= 4096) {
 
                 const embed = new Discord.EmbedBuilder()
                     .setColor(config.MainColor)
@@ -199,7 +199,7 @@ module.exports = {
 
                     const totalTokens = func.tokenizer(model, fullmessages).tokens;
 
-                    if (fullAnswer.length < 4096) {
+                    if (fullAnswer.length <= 4096) {
 
                         const embed = new Discord.EmbedBuilder()
                             .setColor(config.MainColor)
@@ -228,7 +228,7 @@ module.exports = {
 
                 } else {
 
-                    if (answer.includes('\n\n') && fullAnswer.length < 4096) {
+                    if (answer.includes('\n\n') && fullAnswer.length <= 4096) {
 
                         const embed = new Discord.EmbedBuilder()
                             .setColor(config.MainColor)
