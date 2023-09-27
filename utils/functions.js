@@ -71,9 +71,9 @@ module.exports = {
             nameAdjustment = -1;
         }
 
-        const messageTokenCounts = prompt.map((message) => {
+        const messagesTokenCounts = prompt.map((messages) => {
 
-            const propertyTokenCounts = Object.entries(message).map(([key, value]) => {
+            const propertyTokenCounts = Object.entries(messages).map(([key, value]) => {
                 const numTokens = encoder.encode(value).length;
                 const adjustment = (key === 'name') ? nameAdjustment : 0;
                 return numTokens + adjustment;
@@ -83,15 +83,15 @@ module.exports = {
 
         });
 
-        const messageTokens = messageTokenCounts.reduce((a, b) => a + b, tokensPerMessage) + 2;
+        const messagesTokens = messagesTokenCounts.reduce((a, b) => a + b, tokensPerMessage) + 2;
 
         let maxTokens;
         if (model === 'gpt-3.5') maxTokens = 4097
         else if (model === 'gpt-4') maxTokens = 8192
 
         return {
-            tokens: messageTokens,
-            maxTokens: maxTokens - messageTokens
+            tokens: messagesTokens,
+            maxTokens: maxTokens - messagesTokens
         };
 
     },
