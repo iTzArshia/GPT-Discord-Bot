@@ -19,6 +19,12 @@ module.exports = {
         return `<t:${Math.trunc(ms / 1000)}:D> | <t:${Math.trunc(ms / 1000)}:R>`;
     },
 
+    delay: function (ms) {
+        return new Promise(resolve => {
+            setTimeout(() => resolve(), ms);
+        });
+    },
+
     flagCheck: function (object) {
 
         let Sexual = false;
