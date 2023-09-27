@@ -70,7 +70,7 @@ module.exports = {
 
             const usage = response.usage;
 
-            if (answer.length < 4096) {
+            if (answer.length <= 4096) {
 
                 const embed = new Discord.EmbedBuilder()
                     .setColor(config.MainColor)
