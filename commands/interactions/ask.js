@@ -82,7 +82,7 @@ module.exports = {
 
             model: modelNames[model],
             messages: messages,
-            // max_tokens: func.tokenizer(model, messages).maxTokens,
+            max_tokens: func.tokenizer(model, messages).maxTokens,
             temperature: settings.completion.temprature,
             top_p: settings.completion.top_p,
             frequency_penalty: settings.completion.frequency_penalty,
