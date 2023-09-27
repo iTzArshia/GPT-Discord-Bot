@@ -175,8 +175,8 @@ module.exports = {
 
         } else {
 
-            let mainString = "";
-            let string = "";
+            let fullAnswer = "";
+            let answer = "";
             let iterator = 0;
 
             for await (const part of completion) {
@@ -194,7 +194,7 @@ module.exports = {
                         },
                         {
                             "role": 'assistant',
-                            "content": mainString
+                            "content": fullAnswer
                         },
                     ];
 
@@ -206,7 +206,7 @@ module.exports = {
                             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                             iconURL: interaction.user.displayAvatarURL()
                         })
-                        .setDescription(mainString)
+                        .setDescription(fullAnswer)
                         .setFooter({
                             text: `Costs ${func.pricing(model, totalTokens)}`,
                             iconURL: client.user.displayAvatarURL()
@@ -216,7 +216,7 @@ module.exports = {
 
                 } else {
 
-                    if (string.includes('\n\n')) {
+                    if (answer.includes('\n\n')) {
 
                         const embed = new Discord.EmbedBuilder()
                             .setColor(config.MainColor)
@@ -224,7 +224,7 @@ module.exports = {
                                 name: question.length > 256 ? question.substring(0, 253) + "..." : question,
                                 iconURL: interaction.user.displayAvatarURL()
                             })
-                            .setDescription(mainString)
+                            .setDescription(fullAnswer)
                             .setFooter({
                                 text: `Writing...`,
                                 iconURL: client.user.displayAvatarURL()
@@ -233,54 +233,19 @@ module.exports = {
                         await interaction.editReply({ embeds: [embed] });
 
                         iterator = 0;
-                        string = "";
+                        answer = "";
 
                         await func.delay(5000);
 
                     };
 
                     iterator += 1;
-                    string += part.choices[0]?.delta?.content || '';
-                    mainString += part.choices[0]?.delta?.content || '';
+                    answer += part.choices[0]?.delta?.content || '';
+                    fullAnswer += part.choices[0]?.delta?.content || '';
 
                 };
 
             };
-
-            // if (iterator > 0) {
-
-            //     const fullmessages = [
-            //         {
-            //             "role": "system",
-            //             "content": prompt
-            //         },
-            //         {
-            //             "role": 'user',
-            //             "content": question
-            //         },
-            //         {
-            //             "role": 'assistant',
-            //             "content": mainString
-            //         },
-            //     ];
-
-            //     const totalTokens = func.tokenizer(model, fullmessages).tokens;
-
-            //     const embed = new Discord.EmbedBuilder()
-            //         .setColor(config.MainColor)
-            //         .setAuthor({
-            //             name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-            //             iconURL: interaction.user.displayAvatarURL()
-            //         })
-            //         .setDescription(mainString)
-            //         .setFooter({
-            //             text: `Costs ${func.pricing(model, totalTokens)}`,
-            //             iconURL: client.user.displayAvatarURL()
-            //         });
-
-            //     await interaction.editReply({ embeds: [embed] });
-
-            // };
 
         };
 
