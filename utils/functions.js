@@ -36,7 +36,7 @@ module.exports = {
         if (object['sexual'] || object['sexual/minors']) Sexual = true;
         if (object['hate'] || object['hate/threatening']) Hate = true;
         if (object['harassment'] || object['harassment/threatening']) Harassment = true;
-        if (object['self-harm'] || object['self-harm/intent']  || object['self-harm/instructions']) SelfHarm = true;
+        if (object['self-harm'] || object['self-harm/intent'] || object['self-harm/instructions']) SelfHarm = true;
         if (object['violence'] || object['violence/graphic']) Violence = true;
 
         const flags = {
@@ -46,7 +46,7 @@ module.exports = {
             "Self-Harm": SelfHarm,
             "Violence": Violence
         };
-        
+
         const allFlags = Object.keys(flags).map(key => flags[key] ? `${key}: ✅` : `${key}: ❌`).join("\n");
         const trueFlags = Object.keys(flags).filter(key => flags[key]).join(", ");
 
@@ -60,19 +60,30 @@ module.exports = {
 
     tokenizer: function (model, prompt) {
 
+        let tokensPerMessage;
+        let nameAdjustment;
+
+        if (model === 'gpt-4') {
+            tokensPerMessage = 3;
+            nameAdjustment = 1;
+        } else {
+            tokensPerMessage = 4;
+            nameAdjustment = -1;
+        }
+
         const messageTokenCounts = prompt.map((message) => {
 
             const propertyTokenCounts = Object.entries(message).map(([key, value]) => {
                 const numTokens = encoder.encode(value).length;
-                const adjustment = (key === 'name') ? 1 : 0;
-                return numTokens - adjustment;
+                const adjustment = (key === 'name') ? nameAdjustment : 0;
+                return numTokens + adjustment;
             });
 
-            return propertyTokenCounts.reduce((a, b) => a + b, 4);
+            return propertyTokenCounts.reduce((a, b) => a + b, tokensPerMessage);
 
         });
 
-        const messageTokens = messageTokenCounts.reduce((a, b) => a + b, 2);
+        const messageTokens = messageTokenCounts.reduce((a, b) => a + b, tokensPerMessage) + 2;
 
         let maxTokens;
         if (model === 'gpt-3.5') maxTokens = 4097
