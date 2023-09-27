@@ -31,6 +31,21 @@ module.exports = {
             .setRequired(false)
         )
         .addStringOption(option => option
+            .setName('stream')
+            .setDescription('Streams the bot\'s response. (Default: Enable)')
+            .addChoices(
+                {
+                    name: 'Enable',
+                    value: 'Enable'
+                },
+                {
+                    name: 'Disable',
+                    value: 'Disable'
+                }
+            )
+            .setRequired(false)
+        )
+        .addStringOption(option => option
             .setName('ephemeral')
             .setDescription('Hides the bot\'s reply from others. (Default: Disable)')
             .addChoices(
@@ -43,13 +58,18 @@ module.exports = {
                     value: 'Disable'
                 }
             )
+            .setRequired(false)
         ),
 
     async execute(client, interaction) {
 
         const ephemeralChoice = interaction.options.getString('ephemeral');
         const ephemeral = ephemeralChoice === 'Enable' ? true : false;
+
         await interaction.deferReply({ ephemeral: ephemeral });
+
+        const streamChoice = interaction.options.getString('stream');
+        const stream = streamChoice === 'Enable' ? true : false;
 
         const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
 
@@ -86,7 +106,8 @@ module.exports = {
             temperature: settings.completion.temprature,
             top_p: settings.completion.top_p,
             frequency_penalty: settings.completion.frequency_penalty,
-            presence_penalty: settings.completion.presence_penalty
+            presence_penalty: settings.completion.presence_penalty,
+            stream: stream
 
         }).catch(async (error) => {
 
@@ -120,35 +141,129 @@ module.exports = {
 
         });
 
-        const answer = completion.choices[0].message.content;
-        const usage = completion.usage;
+        if (!stream) {
 
-        if (answer.length < 4096) {
+            const answer = completion.choices[0].message.content;
+            const usage = completion.usage;
 
-            const embed = new Discord.EmbedBuilder()
-                .setColor(config.MainColor)
-                .setAuthor({
-                    name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                    iconURL: interaction.user.displayAvatarURL()
-                })
-                .setDescription(answer)
-                .setFooter({
-                    text: `Costs ${func.pricing(model, usage.total_tokens)}`,
-                    iconURL: client.user.displayAvatarURL()
-                });
+            if (answer.length < 4096) {
 
-            await interaction.editReply({ embeds: [embed] });
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.MainColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(answer)
+                    .setFooter({
+                        text: `Costs ${func.pricing(model, usage.total_tokens)}`,
+                        iconURL: client.user.displayAvatarURL()
+                    });
+
+                await interaction.editReply({ embeds: [embed] });
+
+            } else {
+
+                const attachment = new Discord.AttachmentBuilder(
+                    Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
+                    { name: 'response.txt' }
+                );
+
+                await interaction.editReply({ files: [attachment] });
+
+            };
 
         } else {
 
-            const attachment = new Discord.AttachmentBuilder(
-                Buffer.from(`${question}\n\n${answer}`, 'utf-8'),
-                { name: 'response.txt' }
-            );
+            let mainString = "";
+            let string = "";
+            let iterator = 0;
 
-            await interaction.editReply({ files: [attachment] });
+            for await (const part of completion) {
 
-        };
+                if (iterator === 30) {
+
+                    const fullmessages = [
+                        {
+                            "role": "system",
+                            "content": prompt
+                        },
+                        {
+                            "role": 'user',
+                            "content": question
+                        },
+                        {
+                            "role": 'assistant',
+                            "content": mainString
+                        },
+                    ];
+
+                    const totalTokens = func.tokenizer(model, fullmessages).tokens;
+
+                    const embed = new Discord.EmbedBuilder()
+                        .setColor(config.MainColor)
+                        .setAuthor({
+                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                            iconURL: interaction.user.displayAvatarURL()
+                        })
+                        .setDescription(mainString)
+                        .setFooter({
+                            text: `Costs ${func.pricing(model, totalTokens)}`,
+                            iconURL: client.user.displayAvatarURL()
+                        });
+
+                    await interaction.editReply({ embeds: [embed] });
+
+                    iterator = 0;
+                    string = "";
+
+                    await func.delay(2000);
+
+                };
+
+                iterator += 1;
+                string += part.choices[0]?.delta?.content || '';
+                mainString += part.choices[0]?.delta?.content || '';
+
+            };
+
+            if (iterator > 0) {
+
+                const fullmessages = [
+                    {
+                        "role": "system",
+                        "content": prompt
+                    },
+                    {
+                        "role": 'user',
+                        "content": question
+                    },
+                    {
+                        "role": 'assistant',
+                        "content": mainString
+                    },
+                ];
+
+                const totalTokens = func.tokenizer(model, fullmessages).tokens;
+
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(config.MainColor)
+                    .setAuthor({
+                        name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                        iconURL: interaction.user.displayAvatarURL()
+                    })
+                    .setDescription(mainString)
+                    .setFooter({
+                        text: `Costs ${func.pricing(model, totalTokens)}`,
+                        iconURL: client.user.displayAvatarURL()
+                    });
+
+                await interaction.editReply({ embeds: [embed] });
+
+            };
+
+        }
+
 
     },
 
