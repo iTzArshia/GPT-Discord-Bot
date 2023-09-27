@@ -177,7 +177,6 @@ module.exports = {
 
             let fullAnswer = "";
             let answer = "";
-            let iterator = 0;
 
             for await (const part of completion) {
 
@@ -245,14 +244,12 @@ module.exports = {
 
                         await interaction.editReply({ embeds: [embed] });
 
-                        iterator = 0;
                         answer = "";
 
                         await func.delay(5000);
 
                     };
 
-                    iterator += 1;
                     answer += part.choices[0]?.delta?.content || '';
                     fullAnswer += part.choices[0]?.delta?.content || '';
 
