@@ -200,23 +200,36 @@ module.exports = {
 
                     const totalTokens = func.tokenizer(model, fullmessages).tokens;
 
-                    const embed = new Discord.EmbedBuilder()
-                        .setColor(config.MainColor)
-                        .setAuthor({
-                            name: question.length > 256 ? question.substring(0, 253) + "..." : question,
-                            iconURL: interaction.user.displayAvatarURL()
-                        })
-                        .setDescription(fullAnswer)
-                        .setFooter({
-                            text: `Costs ${func.pricing(model, totalTokens)}`,
-                            iconURL: client.user.displayAvatarURL()
-                        });
+                    if (fullAnswer.length < 4096) {
 
-                    await interaction.editReply({ embeds: [embed] });
+                        const embed = new Discord.EmbedBuilder()
+                            .setColor(config.MainColor)
+                            .setAuthor({
+                                name: question.length > 256 ? question.substring(0, 253) + "..." : question,
+                                iconURL: interaction.user.displayAvatarURL()
+                            })
+                            .setDescription(fullAnswer)
+                            .setFooter({
+                                text: `Costs ${func.pricing(model, totalTokens)}`,
+                                iconURL: client.user.displayAvatarURL()
+                            });
+
+                        await interaction.editReply({ embeds: [embed] });
+
+                    } else {
+
+                        const attachment = new Discord.AttachmentBuilder(
+                            Buffer.from(`${question}\n\n${fullAnswer}\n\nCosts ${func.pricing(model, totalTokens)}`, 'utf-8'),
+                            { name: 'response.txt' }
+                        );
+
+                        await interaction.editReply({ embeds: [], files: [attachment] });
+
+                    };
 
                 } else {
 
-                    if (answer.includes('\n\n')) {
+                    if (answer.includes('\n\n') && fullAnswer.length < 4096) {
 
                         const embed = new Discord.EmbedBuilder()
                             .setColor(config.MainColor)
