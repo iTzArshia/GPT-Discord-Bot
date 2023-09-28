@@ -341,7 +341,7 @@ module.exports = async (client, message) => {
                             { name: 'response.txt' }
                         );
 
-                        await interaction.editReply({ files: [attachment] });
+                        await newMessage.reply({ files: [attachment] });
 
                     };
 
