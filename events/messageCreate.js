@@ -22,9 +22,9 @@ module.exports = async (client, message) => {
         if (logChannel?.permissionsFor(message.guild.members.me).has("ViewChannel", "SendMessages", "EmbedLinks")) {
 
             const openai = new openAI.OpenAI({ apiKey: config.OpenAIapiKey });
-            
+
             openai.moderations.create({
-                
+
                 model: 'text-moderation-stable',
                 input: message.content
 
@@ -298,38 +298,70 @@ module.exports = async (client, message) => {
             temperature: settings.completion.temprature,
             top_p: settings.completion.top_p,
             frequency_penalty: settings.completion.frequency_penalty,
-            presence_penalty: settings.completion.presence_penalty
+            presence_penalty: settings.completion.presence_penalty,
+            stream: true
 
         }).then(async (response) => {
 
-            const answer = response.choices[0].message.content;
 
-            const newDataArray = [
-                {
-                    "role": "user",
-                    "content": question
-                },
-                {
-                    "role": "assistant",
-                    "content": answer
-                }
-            ];
+            let fullAnswer = "";
+            let answer = "";
+            let newMessage = message;
 
-            if (conversations.has(message.author.id)) {
-                const oldConversation = conversations.get(message.author.id);
-                conversations.set(message.author.id, oldConversation.concat(newDataArray));
-            } else {
-                conversations.set(message.author.id, newDataArray);
-            };
+            for await (const part of response) {
 
-            if (answer.length <= 2000) await message.reply({ content: answer });
-            else {
+                if (part.choices[0]?.finish_reason === 'stop') {
 
-                const attachment = new Discord.AttachmentBuilder(
-                    Buffer.from(`Question: ${question}\n\n${answer}`, 'utf-8'),
-                    { name: 'response.txt' }
-                );
-                await message.reply({ files: [attachment] });
+                    const newDataArray = [
+                        {
+                            "role": "user",
+                            "content": question
+                        },
+                        {
+                            "role": "assistant",
+                            "content": fullAnswer
+                        }
+                    ];
+
+                    if (conversations.has(message.author.id)) {
+                        const oldConversation = conversations.get(message.author.id);
+                        conversations.set(message.author.id, oldConversation.concat(newDataArray));
+                    } else {
+                        conversations.set(message.author.id, newDataArray);
+                    };
+
+                    if (answer.length <= 2000) {
+
+                        newMessage = await newMessage.reply({ content: answer });
+
+                    } else {
+
+                        const attachment = new Discord.AttachmentBuilder(
+                            Buffer.from(answer, 'utf-8'),
+                            { name: 'response.txt' }
+                        );
+
+                        await interaction.editReply({ files: [attachment] });
+
+                    };
+
+                } else {
+
+                    if (answer.includes('\n\n') && answer.length <= 2000) {
+
+                        await message.channel.sendTyping();
+                        newMessage = await newMessage.reply({ content: answer });
+
+                        answer = "";
+
+                        await func.delay(2000);
+
+                    };
+
+                    answer += part.choices[0]?.delta?.content || '';
+                    fullAnswer += part.choices[0]?.delta?.content || '';
+
+                };
 
             };
 
