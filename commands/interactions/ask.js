@@ -180,7 +180,7 @@ module.exports = {
 
             for await (const part of completion) {
 
-                if (part.choices[0]?.delta?.finish_reason === 'stop') {
+                if (part.choices[0]?.finish_reason === 'stop') {
 
                     const fullmessages = [
                         {
