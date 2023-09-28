@@ -354,7 +354,7 @@ module.exports = async (client, message) => {
 
                         answer = "";
 
-                        await func.delay(2000);
+                        await func.delay(5000);
 
                     };
 
