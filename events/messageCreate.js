@@ -303,7 +303,6 @@ module.exports = async (client, message) => {
 
         }).then(async (response) => {
 
-
             let fullAnswer = "";
             let answer = "";
             let newMessage = message;
@@ -311,6 +310,8 @@ module.exports = async (client, message) => {
             for await (const part of response) {
 
                 if (part.choices[0]?.finish_reason === 'stop') {
+
+                    await message.channel.sendTyping();
 
                     const newDataArray = [
                         {
@@ -347,14 +348,28 @@ module.exports = async (client, message) => {
 
                 } else {
 
-                    if (answer.includes('\n\n') && answer.length <= 2000) {
+                    if (answer.includes('\n\n')) {
 
                         await message.channel.sendTyping();
-                        newMessage = await newMessage.reply({ content: answer });
+
+                        if (answer.length <= 2000) {
+
+                            newMessage = await newMessage.reply({ content: answer });
+
+                        } else {
+
+                            const attachment = new Discord.AttachmentBuilder(
+                                Buffer.from(answer, 'utf-8'),
+                                { name: 'response.txt' }
+                            );
+
+                            await newMessage.reply({ files: [attachment] });
+
+                        };
 
                         answer = "";
-
                         await func.delay(5000);
+
 
                     };
 
