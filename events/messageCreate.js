@@ -384,8 +384,8 @@ module.exports = async (client, message) => {
 
             console.error(chalk.bold.redBright(error));
 
-            if (error.response) await message.reply({ content: error.response.error.message });
-            else if (error.message) await message.reply({ content: error.message });
+            if (error.response) await message.reply({ content: error.response.error.message.length > 4000 ? error.response.error.message.substring(0, 3097) + "..." : error.response.error.message });
+            else if (error.message) await message.reply({ content: error.message.length > 4000 ? error.message.substring(0, 3097) + "..." : error.message });
 
         });
 
