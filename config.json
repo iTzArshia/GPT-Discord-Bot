@@ -1,0 +1,8 @@
+{
+    "Prefix": "Put anything you want as a prefix",
+    "MainColor": "Put any #HexCode you want for embeds color",
+    "ErrorColor": "Put any #HexCode you want for embeds color when there is an error",
+    "ClientID": "Put your Bot ID/Client ID here",
+    "Token": "Put your Bot Token here",
+    "OpenAIapiKey": "Put your Open AI API Key here"
+}   
